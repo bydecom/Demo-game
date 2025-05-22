@@ -1,0 +1,216 @@
+Dưới đây là một hướng dẫn chi tiết về cấu trúc file và các thành phần cần thiết để bạn có thể tự xây dựng một game 2D đơn giản bằng JavaScript, HTML và CSS. Mục tiêu là tổ chức code một cách gọn gàng, rõ ràng và dễ bảo trì bằng cách tách các phần như logic game, đối tượng (nhân vật, kẻ thù), và xử lý sự kiện ra các file riêng biệt.
+
+---
+
+## 1. Cấu trúc thư mục
+
+Ví dụ về cấu trúc dự án:
+
+```
+/my-2d-game
+│
+├── index.html           // Trang chính hiển thị canvas
+├── style.css            // Định dạng giao diện của trang web
+├── main.js              // File khởi tạo và chạy vòng lặp game
+│
+├── /js
+│   ├── game.js          // Class Game: quản lý vòng lặp, update và draw cho toàn bộ game
+│   ├── player.js        // Class Player: định nghĩa nhân vật chính (constructor, update, draw)
+│   ├── enemy.js         // Class Enemy: định nghĩa kẻ thù hoặc các đối tượng phụ
+│   └── event.js         // Class EventHandler: xử lý các sự kiện bàn phím (v.v.)
+│
+└── /assets
+    ├── /images          // Chứa hình ảnh: sprite, background, …
+    │   ├── player.png
+    │   ├── enemy.png
+    │   └── background.jpg
+    │
+    └── /audio           // Chứa âm thanh: nhạc nền, hiệu ứng, …
+        ├── shoot.mp3
+        └── explosion.mp3
+```
+
+---
+
+## 2. Nội dung và chức năng của từng file
+
+### **index.html**
+- Tạo giao diện cho game, thường chứa một thẻ `<canvas>` để render game.
+- Liên kết tới file CSS và file JavaScript chính.
+
+```html
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <title>My 2D Game</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <canvas id="gameCanvas" width="800" height="600"></canvas>
+  <script type="module" src="main.js"></script>
+</body>
+</html>
+```
+
+### **style.css**
+- Định dạng giao diện cho trang, ví dụ: căn giữa canvas, nền trang,…
+
+```css
+body {
+  margin: 0;
+  padding: 0;
+  background-color: #000;
+}
+canvas {
+  display: block;
+  margin: 0 auto;
+  background: #ccc;
+}
+```
+
+### **main.js**
+- Lấy đối tượng canvas và context.
+- Tạo instance của class Game (được định nghĩa trong file `game.js`) và khởi động vòng lặp game.
+
+```js
+import Game from './js/game.js';
+
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+
+const game = new Game(canvas, ctx);
+game.start();
+```
+
+### **js/game.js**
+- Định nghĩa class Game, chịu trách nhiệm về:
+  - Khởi tạo các đối tượng trong game (như Player, Enemy, …).
+  - Vòng lặp game: tính deltaTime, gọi các phương thức update và draw.
+  - Quản lý các sự kiện nếu cần (thường thông qua một class EventHandler riêng).
+
+```js
+import Player from './player.js';
+import EventHandler from './event.js';
+
+export default class Game {
+  constructor(canvas, ctx) {
+    this.canvas = canvas;
+    this.ctx = ctx;
+    this.lastTime = 0;
+    this.eventHandler = new EventHandler();
+    // Khởi tạo player và danh sách enemy (ví dụ)
+    this.player = new Player(100, 100, this.eventHandler);
+    this.enemies = [new Enemy(300, 200), new Enemy(500, 300)];
+  }
+
+  start() {
+    requestAnimationFrame(this.gameLoop.bind(this));
+  }
+
+  gameLoop(timestamp) {
+    const deltaTime = timestamp - this.lastTime;
+    this.lastTime = timestamp;
+    this.update(deltaTime);
+    this.draw();
+    requestAnimationFrame(this.gameLoop.bind(this));
+  }
+
+  update(deltaTime) {
+    this.player.update(deltaTime);
+  }
+
+  draw() {
+    // Xóa canvas trước khi vẽ lại
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    this.player.draw(this.ctx);
+  }
+}
+```
+
+### **js/player.js**
+- Định nghĩa class Player với các phương thức:
+  - **constructor:** Khởi tạo vị trí, tốc độ, kích thước, v.v.
+  - **update:** Cập nhật trạng thái (như di chuyển dựa trên bàn phím).
+  - **draw:** Vẽ nhân vật lên canvas.
+
+```js
+export default class Player {
+  constructor(x, y, eventHandler) {
+    this.x = x;
+    this.y = y;
+    this.speed = 200; // pixel/giây
+    this.eventHandler = eventHandler;
+    this.width = 50;
+    this.height = 50;
+  }
+
+  update(deltaTime) {
+    const deltaSeconds = deltaTime / 1000;
+    // Di chuyển theo các phím mũi tên
+    if (this.eventHandler.isKeyPressed('ArrowRight')) {
+      this.x += this.speed * deltaSeconds;
+    }
+    if (this.eventHandler.isKeyPressed('ArrowLeft')) {
+      this.x -= this.speed * deltaSeconds;
+    }
+    if (this.eventHandler.isKeyPressed('ArrowUp')) {
+      this.y -= this.speed * deltaSeconds;
+    }
+    if (this.eventHandler.isKeyPressed('ArrowDown')) {
+      this.y += this.speed * deltaSeconds;
+    }
+  }
+
+  draw(ctx) {
+    ctx.fillStyle = 'blue';
+    ctx.fillRect(this.x, this.y, this.width, this.height);
+  }
+}
+```
+
+
+### **js/event.js**
+- Định nghĩa class EventHandler để quản lý các sự kiện bàn phím.
+- Lưu trạng thái của các phím đang được nhấn để có thể kiểm tra trong phương thức update của Player.
+
+```js
+export default class EventHandler {
+  constructor() {
+    this.keys = {};
+    window.addEventListener('keydown', (e) => {
+      this.keys[e.key] = true;
+    });
+    window.addEventListener('keyup', (e) => {
+      this.keys[e.key] = false;
+    });
+  }
+
+  isKeyPressed(key) {
+    return this.keys[key] || false;
+  }
+}
+```
+
+---
+
+## 3. Tổng hợp lại
+
+- **Lý do sử dụng các class:**  
+  Mỗi class (Player,  Game, EventHandler) đều có các phương thức như **constructor** (khởi tạo các thuộc tính ban đầu), **update** (cập nhật trạng thái mỗi frame) và **draw** (vẽ đối tượng lên màn hình). Cách tổ chức này giúp tách biệt logic, dễ bảo trì và mở rộng khi dự án phát triển.
+
+- **Vòng lặp game:**  
+  Sử dụng `requestAnimationFrame` để tạo vòng lặp game liên tục, đảm bảo cập nhật và vẽ lại các đối tượng theo thời gian thực.
+
+- **Xử lý sự kiện:**  
+  Tạo một class riêng để quản lý các sự kiện như bàn phím. Điều này cho phép bạn dễ dàng kiểm tra trạng thái của các phím trong các phương thức update của các đối tượng (như Player).
+
+---
+
+## 4. Cách bắt đầu
+
+1. **Tạo các file** theo cấu trúc thư mục trên.
+2. **Viết code** cho từng file theo mẫu đã đưa ra.
+3. **Chạy file index.html** trên trình duyệt để kiểm tra game.
+4. **Tùy chỉnh và mở rộng**: Bạn có thể thêm các class mới, cải tiến logic xử lý va chạm, thêm animation, tải sprite từ folder assets,…
+

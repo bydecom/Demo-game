@@ -1,0 +1,307 @@
+body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    height: 100vh;
+}
+
+#game-wrapper {
+    position: relative;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+}
+
+#game-container {
+    position: absolute;
+    width: 7680px;
+    height: 2160px;
+    background-image: url('assets/images/background.jpg');
+    background-size: cover;
+    background-position: left top;
+    cursor: pointer;
+    transition: none;
+}
+
+#character {
+    position: absolute;
+    width: 685px;
+    height: 1300px;
+    background-image: url('assets/images/Dang-left.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    transform: translate(-50%, -50%);
+    transition: left 0.8s cubic-bezier(0.22, 1, 0.36, 1);
+    top: 50%;
+    z-index: 5;
+}
+
+#character.walking-left {
+    animation: walkLeft 0.4s steps(2) infinite;
+}
+
+#character.walking-right {
+    animation: walkRight 0.4s steps(2) infinite;
+}
+
+@keyframes walkLeft {
+    0%, 100% { background-image: url('assets/images/Dang-left.png'); }
+    50% { background-image: url('assets/images/Dang-move-left.png'); }
+}
+
+@keyframes walkRight {
+    0%, 100% { background-image: url('assets/images/Dang-right.png'); }
+    50% { background-image: url('assets/images/Dang-move-right.png'); }
+}
+
+#character.moving-left {
+    transform: translate(-50%, -50%);
+}
+
+#character.moving-right {
+    transform: translate(-50%, -50%);
+}
+
+#character.is-moving {
+    cursor: not-allowed;
+}
+
+.game-wrapper.character-moving {
+    cursor: wait;
+}
+
+#message {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 10px 20px;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    border-radius: 5px;
+    font-family: Arial, sans-serif;
+    opacity: 0;
+    transition: opacity 0.3s;
+    z-index: 10;
+}
+
+.audio-control {
+    position: fixed;
+    top: 20px;
+    z-index: 1000;
+    padding: 10px;
+    cursor: pointer;
+    background: rgba(0, 0, 0, 0.7);
+    border: none;
+    color: white;
+    border-radius: 5px;
+    font-size: 20px;
+    transition: transform 0.3s, background-color 0.3s;
+}
+
+.audio-control:hover {
+    transform: scale(1.1);
+    background-color: rgba(50, 50, 50, 0.9);
+}
+
+.audio-control-left {
+    left: 20px;
+}
+
+.movement-particle {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    background-color: rgba(255, 50, 50, 0.4);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 4;
+    animation: fadeOut 0.5s forwards;
+}
+
+@keyframes fadeOut {
+    0% { opacity: 0.7; width: 20px; height: 20px; }
+    100% { opacity: 0; width: 5px; height: 5px; }
+}
+
+.map-controls {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    display: flex;
+    gap: 10px;
+}
+
+.map-controls button {
+    padding: 10px 20px;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    border: 1px solid white;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    font-family: Arial, sans-serif;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.map-controls button:hover {
+    background: rgba(50, 50, 50, 0.9);
+    transform: scale(1.05);
+}
+
+.map-controls button:active {
+    transform: scale(0.95);
+}
+
+/* CSS cho các item trong game */
+.game-item {
+    position: absolute;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    cursor: pointer;
+    transition: transform 0.3s, filter 0.3s;
+    z-index: 10;
+}
+
+.game-item:hover {
+    transform: scale(1.1);
+    filter: brightness(1.2);
+}
+
+.item-collected {
+    animation: collectItem 0.5s forwards;
+}
+
+@keyframes collectItem {
+    0% { transform: scale(1); opacity: 1; }
+    50% { transform: scale(1.5); opacity: 0.8; }
+    100% { transform: scale(0); opacity: 0; }
+}
+
+/* CSS cho inventory */
+.inventory {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 250px;
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 10px;
+    color: white;
+    padding: 10px;
+    z-index: 1001;
+    font-family: Arial, sans-serif;
+    transform: translateX(260px);
+    transition: transform 0.3s ease-in-out;
+}
+
+.inventory-open {
+    transform: translateX(0);
+}
+
+.inventory-title {
+    font-size: 18px;
+    font-weight: bold;
+    padding: 5px;
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    margin-bottom: 10px;
+}
+
+.inventory-items {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    padding: 5px;
+}
+
+.inventory-item {
+    width: 60px;
+    height: 60px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 5px;
+    cursor: pointer;
+    transition: transform 0.2s, background-color 0.2s;
+}
+
+.inventory-item:hover {
+    transform: scale(1.1);
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.inventory-toggle {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    width: 50px;
+    height: 50px;
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    font-size: 24px;
+    cursor: pointer;
+    z-index: 1002;
+    transition: transform 0.3s, background-color 0.3s;
+}
+
+.inventory-toggle:hover {
+    transform: scale(1.1);
+    background-color: rgba(50, 50, 50, 0.9);
+}
+
+.inventory-toggle.has-items {
+    animation: pulse 1s infinite;
+}
+
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); background-color: rgba(100, 150, 200, 0.9); }
+    100% { transform: scale(1); }
+}
+
+.map-menu-button {
+    left: 80px;
+}
+
+.map-dropdown {
+    position: absolute;
+    top: 45px;
+    left: 0;
+    background: rgba(0, 0, 0, 0.8);
+    border-radius: 5px;
+    display: none;
+    flex-direction: column;
+    min-width: 120px;
+    z-index: 1001;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.map-dropdown.show {
+    display: flex;
+}
+
+.map-item {
+    padding: 10px 15px;
+    color: white;
+    background: transparent;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    font-family: Arial, sans-serif;
+    transition: background-color 0.2s;
+}
+
+.map-item:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.map-item:active {
+    background-color: rgba(255, 255, 255, 0.3);
+} 

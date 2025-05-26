@@ -37,14 +37,14 @@ export default class Map {
             ],
             items: [
                 {
-                    id: 'crown1',
-                    name: 'Vương miện hoàng gia',
-                    x: 3800,
-                    y: 1200,
-                    width: 100,
-                    height: 100,
-                    image: 'assets/images/items/crown.png',
-                    clickMessage: 'Bạn đã tìm thấy Vương miện hoàng gia! Đây là một báu vật quý giá.'
+                    id: 'computer',
+                    name: 'máy tính',
+                    x: 5457,
+                    y: 657,
+                    width: 1402,
+                    height: 1362,
+                    image: 'assets/images/items/computer.png',
+                    clickMessage: 'Bạn đã tìm thấy máy tính! Đây là một báu vật quý giá.'
                 },
                 {
                     id: 'sword1',
@@ -53,7 +53,7 @@ export default class Map {
                     y: 1400,
                     width: 120,
                     height: 150,
-                    image: 'assets/images/items/sword.png',
+                    image: 'assets/images/items/computer.png',
                     clickMessage: 'Thanh kiếm huyền thoại! Người ta đồn rằng nó từng thuộc về một anh hùng vĩ đại.'
                 }
             ]

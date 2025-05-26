@@ -158,8 +158,8 @@ body {
 }
 
 .game-item:hover {
-    transform: scale(1.1);
-    filter: brightness(1.2);
+
+    filter: brightness(1.1);
 }
 
 .item-collected {
@@ -286,8 +286,8 @@ body {
 }
 
 .game-menu-button {
-    margin-bottom: 10px;
-    padding: 0 15px;
+    margin-bottom: 5px;
+    padding: 0 5px;
     font-size: 24px;
     color: white;
     background-color: transparent;

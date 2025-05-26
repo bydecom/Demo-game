@@ -1,109 +1,111 @@
-export default class Preloader {
+class ResourcePreloader {
     constructor() {
-        this.totalAssets = 0;
-        this.loadedAssets = 0;
-        this.assets = {
-            images: {},
-            audio: {}
+        // Danh sách tài nguyên cần tải
+        this.resources = {
+            images: [
+                // Background và UI chính
+                'assets/images/background.jpg',
+                'assets/images/menu/menu.png',
+                'assets/images/menu/loading.png',
+                'assets/images/menu/credit.png',
+                'assets/images/button/back.png',
+                // Frame animation của nhân vật
+                'assets/images/move/1.png',
+                'assets/images/move/2.png',
+                'assets/images/move/3.png',
+                'assets/images/move/4.png',
+                'assets/images/move/5.png',
+                'assets/images/move/6.png',
+                'assets/images/move/7.png',
+                'assets/images/move/8.png',
+                'assets/images/move/9.png',
+                'assets/images/move/10.png'
+            ],
+            audio: [
+                'assets/audio/background-music.mp3',
+                'assets/audio/footstep.mp3'
+            ]
         };
 
-        // Danh sách tất cả tài nguyên cần tải
-        this.imageAssets = [
-            { key: 'background', src: 'assets/images/background.jpg' },
-            { key: 'move1', src: 'assets/images/move/1.png' },
-            { key: 'move2', src: 'assets/images/move/2.png' },
-            { key: 'move3', src: 'assets/images/move/3.png' },
-            { key: 'move4', src: 'assets/images/move/4.png' },
-            { key: 'move5', src: 'assets/images/move/5.png' },
-            { key: 'move6', src: 'assets/images/move/6.png' },
-            { key: 'move7', src: 'assets/images/move/7.png' },
-            { key: 'move8', src: 'assets/images/move/8.png' },
-            { key: 'move9', src: 'assets/images/move/9.png' },
-            { key: 'move10', src: 'assets/images/move/10.png' },
-            { key: 'menu', src: 'assets/images/menu/menu.png' },
-            { key: 'loading', src: 'assets/images/menu/loading.png' },
-            { key: 'credit', src: 'assets/images/menu/credit.png' },
-            { key: 'back', src: 'assets/images/button/back.png' }
-        ];
+        // Cache cho tài nguyên đã load
+        this.cache = {
+            images: new Map(),
+            audio: new Map()
+        };
 
-        this.audioAssets = [
-            { key: 'bgMusic', src: 'assets/audio/background-music.mp3' },
-            { key: 'walkSound', src: 'assets/audio/footstep.mp3' }
-        ];
-
-        this.totalAssets = this.imageAssets.length + this.audioAssets.length;
+        // Bắt đầu preload ngay khi khởi tạo
+        this.startPreloading();
     }
 
-    preload() {
-        return new Promise((resolve) => {
-            // Tạo container ẩn để chứa tài nguyên đã tải
-            const hiddenContainer = document.createElement('div');
-            hiddenContainer.style.cssText = 'position: absolute; visibility: hidden; pointer-events: none;';
-            document.body.appendChild(hiddenContainer);
+    startPreloading() {
+        // Preload images
+        this.resources.images.forEach(src => {
+            if (!this.cache.images.has(src)) {
+                const img = new Image();
+                img.onload = () => {
+                    this.cache.images.set(src, img);
+                    console.log(`Đã tải xong hình ảnh: ${src}`);
+                };
+                img.onerror = () => {
+                    console.error(`Lỗi khi tải hình ảnh: ${src}`);
+                };
+                img.src = src;
+            }
+        });
 
-            // Tải hình ảnh
-            this.imageAssets.forEach(img => {
-                const image = new Image();
-                image.onload = () => {
-                    this.assets.images[img.key] = image;
-                    this.loadedAssets++;
-                    this.updateProgress();
-                    if (this.isLoadComplete()) {
-                        resolve(this.assets);
-                    }
+        // Preload audio
+        this.resources.audio.forEach(src => {
+            if (!this.cache.audio.has(src)) {
+                const audio = new Audio();
+                audio.oncanplaythrough = () => {
+                    this.cache.audio.set(src, audio);
+                    console.log(`Đã tải xong âm thanh: ${src}`);
                 };
-                image.onerror = () => {
-                    console.error(`Failed to load image: ${img.src}`);
-                    this.loadedAssets++;
-                    this.updateProgress();
-                    if (this.isLoadComplete()) {
-                        resolve(this.assets);
-                    }
+                audio.onerror = () => {
+                    console.error(`Lỗi khi tải âm thanh: ${src}`);
                 };
-                image.src = img.src;
-                hiddenContainer.appendChild(image);
-            });
-
-            // Tải âm thanh
-            this.audioAssets.forEach(audio => {
-                const audioElement = new Audio();
-                audioElement.oncanplaythrough = () => {
-                    this.assets.audio[audio.key] = audioElement;
-                    this.loadedAssets++;
-                    this.updateProgress();
-                    if (this.isLoadComplete()) {
-                        resolve(this.assets);
-                    }
-                };
-                audioElement.onerror = () => {
-                    console.error(`Failed to load audio: ${audio.src}`);
-                    this.loadedAssets++;
-                    this.updateProgress();
-                    if (this.isLoadComplete()) {
-                        resolve(this.assets);
-                    }
-                };
-                audioElement.src = audio.src;
-                audioElement.load();
-                hiddenContainer.appendChild(audioElement);
-            });
+                // Tắt âm thanh khi preload
+                audio.volume = 0;
+                audio.muted = true;
+                audio.src = src;
+                // Bắt đầu load
+                audio.load();
+            }
         });
     }
 
-    updateProgress() {
-        const progress = (this.loadedAssets / this.totalAssets) * 100;
-        // Emit event for progress update
-        const event = new CustomEvent('assetLoadProgress', { 
-            detail: { progress: progress } 
-        });
-        document.dispatchEvent(event);
+    // Lấy hình ảnh đã cache
+    getImage(src) {
+        const cachedImage = this.cache.images.get(src);
+        if (cachedImage) {
+            // Trả về bản copy của hình ảnh để tránh conflict
+            const newImg = new Image();
+            newImg.src = cachedImage.src;
+            return newImg;
+        }
+        // Nếu chưa có trong cache, tải mới
+        const img = new Image();
+        img.src = src;
+        return img;
     }
 
-    isLoadComplete() {
-        return this.loadedAssets === this.totalAssets;
+    // Lấy âm thanh đã cache
+    getAudio(src) {
+        const cachedAudio = this.cache.audio.get(src);
+        if (cachedAudio) {
+            // Clone audio để có thể phát nhiều lần
+            const newAudio = new Audio();
+            newAudio.src = cachedAudio.src;
+            return newAudio;
+        }
+        // Nếu chưa có trong cache, tải mới
+        const audio = new Audio(src);
+        return audio;
     }
+}
 
-    getAsset(type, key) {
-        return this.assets[type][key];
-    }
-} 
+// Tạo instance duy nhất của ResourcePreloader
+const resourcePreloader = new ResourcePreloader();
+
+// Export instance để sử dụng trong toàn bộ game
+export default resourcePreloader; 

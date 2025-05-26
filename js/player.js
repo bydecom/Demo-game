@@ -2,8 +2,8 @@ export default class Player {
     constructor(game) {
         this.game = game;
         this.element = document.getElementById('character');
-        this.width = 885;
-        this.height = 1500;
+        this.width = 685;
+        this.height = 1400;
         
         // Lấy vị trí bắt đầu từ map hiện tại
         this.x = this.game.map.getPlayerStartX();
@@ -75,7 +75,7 @@ export default class Player {
         // Khôi phục transition sau khi đã đặt vị trí
         setTimeout(() => {
             this.element.style.transition = 'left 0.8s cubic-bezier(0.22, 1, 0.36, 1)';
-        }, 50);
+        }, 10);
     }
     
     moveToPosition(targetX) {

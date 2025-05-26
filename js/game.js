@@ -77,14 +77,13 @@ export default class Game {
         const viewWidth = window.innerWidth / this.scale;
         
         // Tính toán vị trí camera để nhân vật luôn ở giữa màn hình
-        const playerX = this.player.x;
-        const offsetX = playerX - (viewWidth / 2);
+        const offsetX = this.player.x - viewWidth / 2;
         const mapWidth = this.map.getWidth();
         
         // Giới hạn camera để không vượt quá rìa map
         this.currentScrollX = Math.max(0, Math.min(offsetX, mapWidth - viewWidth));
         
-        // Áp dụng transform để camera theo kịp nhân vật
+        // Áp dụng transform ngay lập tức để camera theo kịp nhân vật
         this.gameContainer.style.transform = `scale(${this.scale}) translateX(${-this.currentScrollX}px)`;
     }
     
@@ -231,37 +230,24 @@ export default class Game {
             this.messageManager = new MessageManager(this.map.getMessages());
         }
 
-        // Tắt tất cả animation trước
-        this.gameContainer.style.transition = 'none';
+        // Reset player position với animation tắt
         if (this.player) {
             this.player.element.style.transition = 'none';
-        }
-
-        // Reset player position
-        if (this.player) {
             this.player.resetPosition();
             // Force a reflow để đảm bảo transition được reset
             this.player.element.offsetHeight;
+            // Bật lại animation sau khi đã đặt vị trí
+            this.player.element.style.transition = 'left 0.8s cubic-bezier(0.22, 1, 0.36, 1)';
         }
 
-        // Cập nhật camera để căn giữa nhân vật ngay lập tức
-        const viewWidth = window.innerWidth / this.scale;
-        const playerX = this.player.x;
-        const offsetX = playerX - (viewWidth / 2);
-        const mapWidth = this.map.getWidth();
-        this.currentScrollX = Math.max(0, Math.min(offsetX, mapWidth - viewWidth));
-        this.gameContainer.style.transform = `scale(${this.scale}) translateX(${-this.currentScrollX}px)`;
-        
+        // Reset camera position
+        this.currentScrollX = 0;
+        this.gameContainer.style.transition = 'none';
+        this.gameContainer.style.transform = `translate3d(0px, 0px, 0) scale(${this.scale})`;
         // Force a reflow để đảm bảo transform được áp dụng ngay lập tức
         this.gameContainer.offsetHeight;
-
-        // Bật lại animation sau khi đã thiết lập vị trí
-        requestAnimationFrame(() => {
-            this.gameContainer.style.transition = 'transform 0.8s cubic-bezier(0.22, 1, 0.36, 1)';
-            if (this.player) {
-                this.player.element.style.transition = 'left 0.8s cubic-bezier(0.22, 1, 0.36, 1)';
-            }
-        });
+        // Bật lại animation cho camera
+        this.gameContainer.style.transition = 'transform 0.8s cubic-bezier(0.22, 1, 0.36, 1)';
     }
     
     // Thêm phương thức để enable click events

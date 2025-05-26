@@ -217,8 +217,7 @@ export default class Game {
     // Thêm phương thức mới để reset game state
     resetGameState() {
         // Reset map về map đầu tiên
-        this.currentMapId = 1;
-        this.map = new Map(this.currentMapId, this);
+        this.currentMapId = 7;
         
         // Reset inventory
         if (this.inventory) {
@@ -239,6 +238,9 @@ export default class Game {
             // Bật lại animation sau khi đã đặt vị trí
             this.player.element.style.transition = 'left 0.8s cubic-bezier(0.22, 1, 0.36, 1)';
         }
+
+        // Reset map items
+        this.map.resetItems();
 
         // Reset camera position
         this.currentScrollX = 0;

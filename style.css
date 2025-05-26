@@ -154,7 +154,7 @@ body {
     background-position: center;
     cursor: pointer;
     transition: transform 0.3s, filter 0.3s;
-    z-index: 10;
+    z-index: 4;
 }
 
 .game-item:hover {

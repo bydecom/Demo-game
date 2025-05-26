@@ -55,22 +55,22 @@ export default class Menu {
             // Reset game state và thiết lập vị trí nhân vật trước
             this.game.resetGameState();
             
-            // Thêm hiệu ứng fade out cho menu
-            this.menuElement.style.opacity = '0';
-            this.menuElement.style.transition = 'opacity 1s ease';
+        // Thêm hiệu ứng fade out cho menu
+        this.menuElement.style.opacity = '0';
+        this.menuElement.style.transition = 'opacity 1s ease';
 
-            // Sau khi animation kết thúc
-            setTimeout(() => {
-                // Ẩn menu
-                this.menuElement.style.display = 'none';
-                
+        // Sau khi animation kết thúc
+        setTimeout(() => {
+            // Ẩn menu
+            this.menuElement.style.display = 'none';
+            
                 // Hiển thị game container nhưng vẫn ẩn
-                this.game.gameContainer.style.display = 'block';
+            this.game.gameContainer.style.display = 'block';
                 this.game.gameContainer.style.opacity = '0';
-                
-                // Bật lại event listeners cho game
-                this.game.enableGameEvents();
-                
+            
+            // Bật lại event listeners cho game
+            this.game.enableGameEvents();
+            
                 // Đảm bảo camera đã được cập nhật trước khi hiển thị
                 this.game.updateCamera();
                 
@@ -83,14 +83,14 @@ export default class Menu {
                 });
                 
                 // Bắt đầu game
-                this.game.start();
-                
-                // Hiển thị nút back
-                const backButton = document.querySelector('.game-back-button');
-                if (backButton) {
-                    backButton.style.display = 'block';
-                }
-            }, 1000);
+            this.game.start();
+            
+            // Hiển thị nút back
+            const backButton = document.querySelector('.game-back-button');
+            if (backButton) {
+                backButton.style.display = 'block';
+            }
+        }, 1000);
         };
         this.loadingScreen.show();
     }
@@ -98,9 +98,8 @@ export default class Menu {
     resetGame() {
         // Reset map về map đầu tiên
         this.game.currentMapId = 1;
-        this.game.map = new Map(this.game.currentMapId, this.game);
         
-        // Reset inventory
+        // Reset inventory trước
         this.game.inventory.clearItems();
         
         // Reset player position và camera sẽ tự động căn giữa theo player
@@ -111,6 +110,9 @@ export default class Menu {
         
         // Reset audio (nếu cần)
         this.game.audioManager.resetAudio();
+        
+        // Reset map items
+        this.game.map.resetItems();
         
         // Camera sẽ tự động update thông qua game.start()
         this.game.updateCamera();

@@ -86,6 +86,14 @@ export default class Map {
         }
     }
     
+    resetItems() {
+        // Xóa items cũ
+        this.clearItems();
+        
+        // Tạo lại items từ map data
+        this.createItems();
+    }
+    
     clearItems() {
         // Xóa tất cả các items hiện có khỏi DOM
         this.items.forEach(item => {

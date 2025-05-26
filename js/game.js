@@ -4,6 +4,7 @@ import AudioManager from './audio.js';
 import MessageManager from './message.js';
 import Map from './map.js';
 import Inventory from './inventory.js';
+import Menu from './menu.js';
 
 export default class Game {
     constructor() {
@@ -33,6 +34,15 @@ export default class Game {
         this.gameContainer.style.transformOrigin = 'left top';
         this.gameContainer.style.transform = `scale(${this.scale})`;
         
+        // Khởi tạo menu
+        this.menu = new Menu(this);
+        
+        // Tạo nút back
+        this.createBackButton();
+        
+        // Thêm biến để lưu trữ event listener
+        this.clickHandler = null;
+        
         // Khởi tạo các event listener
         this.initEventListeners();
         
@@ -40,20 +50,21 @@ export default class Game {
     }
     
     initEventListeners() {
-        // Click để di chuyển
-        this.gameWrapper.addEventListener('click', (event) => {
+        // Tạo handler function và lưu lại để có thể remove sau này
+        this.clickHandler = (event) => {
             // Nếu nhân vật đang di chuyển thì bỏ qua click
             if (this.player.isMoving) {
                 return;
             }
             
             // Kiểm tra xem click có trúng vào item không
-            // Nếu trúng item, event sẽ được xử lý trong item và không lan truyền đến đây
-            // Nếu không trúng item, nhân vật sẽ di chuyển
             const clickX = (event.clientX / this.scale) + this.currentScrollX;
             this.player.moveToPosition(clickX);
             this.audioManager.playWalkSound();
-        });
+        };
+
+        // Không attach event listener ngay lập tức
+        // Sẽ được attach khi game bắt đầu
         
         // Xử lý resize màn hình
         window.addEventListener('resize', () => {
@@ -66,13 +77,14 @@ export default class Game {
         const viewWidth = window.innerWidth / this.scale;
         
         // Tính toán vị trí camera để nhân vật luôn ở giữa màn hình
-        const offsetX = this.player.x - viewWidth / 2;
+        const playerX = this.player.x;
+        const offsetX = playerX - (viewWidth / 2);
         const mapWidth = this.map.getWidth();
         
         // Giới hạn camera để không vượt quá rìa map
         this.currentScrollX = Math.max(0, Math.min(offsetX, mapWidth - viewWidth));
         
-        // Áp dụng transform ngay lập tức để camera theo kịp nhân vật
+        // Áp dụng transform để camera theo kịp nhân vật
         this.gameContainer.style.transform = `scale(${this.scale}) translateX(${-this.currentScrollX}px)`;
     }
     
@@ -95,13 +107,31 @@ export default class Game {
         // Cập nhật camera
         this.updateCamera();
         
+        
         // Hiển thị thông báo chuyển map
         this.messageManager.showMessage(`Đã chuyển đến Map ${mapId}`);
     }
     
     start() {
-        this.messageManager.showInitialMessage();
+        // Đảm bảo game container được hiển thị
+        this.gameContainer.style.display = 'block';
+        
+        // Reset và khởi tạo lại các thành phần cần thiết
+        this.resetGameState();
+        
+        // Cập nhật camera và hiển thị message
         this.updateCamera();
+        
+        this.messageManager.showInitialMessage();
+        
+        // Hiển thị nút back
+        const backButton = document.querySelector('.game-back-button');
+        if (backButton) {
+            backButton.style.display = 'block';
+        }
+        
+        // Thêm phương thức để enable click events
+        this.enableGameEvents();
     }
     
     // Phương thức mới để cập nhật hiển thị UI khi nhân vật đang di chuyển
@@ -155,5 +185,92 @@ export default class Game {
         
         // Áp dụng transform không có transition để camera di chuyển cùng nhân vật
         this.gameContainer.style.transform = `scale(${this.scale}) translateX(${-this.currentScrollX}px)`;
+    }
+    
+    createBackButton() {
+        let backButton = document.querySelector('.game-back-button');
+        
+        if (!backButton) {
+            backButton = document.createElement('button');
+            backButton.className = 'game-back-button';
+            
+            backButton.addEventListener('click', () => {
+                // Ẩn nút back
+                backButton.style.display = 'none';
+                
+                // Tắt event listeners của game
+                this.disableGameEvents();
+                
+                // Ẩn game container
+                this.gameContainer.style.display = 'none';
+                
+                // Hiển thị lại menu
+                this.menu.menuElement.style.display = 'flex';
+                this.menu.menuElement.style.opacity = '1';
+            });
+            
+            this.gameWrapper.appendChild(backButton);
+        }
+        
+        backButton.style.display = 'block';
+    }
+    
+    // Thêm phương thức mới để reset game state
+    resetGameState() {
+        // Reset map về map đầu tiên
+        this.currentMapId = 1;
+        this.map = new Map(this.currentMapId, this);
+        
+        // Reset inventory
+        if (this.inventory) {
+            this.inventory.clearItems();
+        }
+        
+        // Reset message manager
+        if (this.messageManager) {
+            this.messageManager = new MessageManager(this.map.getMessages());
+        }
+
+        // Tắt tất cả animation trước
+        this.gameContainer.style.transition = 'none';
+        if (this.player) {
+            this.player.element.style.transition = 'none';
+        }
+
+        // Reset player position
+        if (this.player) {
+            this.player.resetPosition();
+            // Force a reflow để đảm bảo transition được reset
+            this.player.element.offsetHeight;
+        }
+
+        // Cập nhật camera để căn giữa nhân vật ngay lập tức
+        const viewWidth = window.innerWidth / this.scale;
+        const playerX = this.player.x;
+        const offsetX = playerX - (viewWidth / 2);
+        const mapWidth = this.map.getWidth();
+        this.currentScrollX = Math.max(0, Math.min(offsetX, mapWidth - viewWidth));
+        this.gameContainer.style.transform = `scale(${this.scale}) translateX(${-this.currentScrollX}px)`;
+        
+        // Force a reflow để đảm bảo transform được áp dụng ngay lập tức
+        this.gameContainer.offsetHeight;
+
+        // Bật lại animation sau khi đã thiết lập vị trí
+        requestAnimationFrame(() => {
+            this.gameContainer.style.transition = 'transform 0.8s cubic-bezier(0.22, 1, 0.36, 1)';
+            if (this.player) {
+                this.player.element.style.transition = 'left 0.8s cubic-bezier(0.22, 1, 0.36, 1)';
+            }
+        });
+    }
+    
+    // Thêm phương thức để enable click events
+    enableGameEvents() {
+        this.gameWrapper.addEventListener('click', this.clickHandler);
+    }
+    
+    // Thêm phương thức để disable click events
+    disableGameEvents() {
+        this.gameWrapper.removeEventListener('click', this.clickHandler);
     }
 } 

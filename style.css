@@ -1,8 +1,12 @@
+/* Import Saira Font */
+@import url('https://fonts.googleapis.com/css2?family=Saira:wght@300;400;500;600;700&display=swap');
+
 body {
     margin: 0;
     padding: 0;
     overflow: hidden;
     height: 100vh;
+    font-family: 'Saira', sans-serif;
 }
 
 #game-wrapper {
@@ -25,9 +29,9 @@ body {
 
 #character {
     position: absolute;
-    width: 685px;
-    height: 1300px;
-    background-image: url('assets/images/Dang-left.png');
+    width: 850px;
+    height: 1500px;
+    background-image: url('assets/images/move/1.png');
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
@@ -38,21 +42,38 @@ body {
 }
 
 #character.walking-left {
-    animation: walkLeft 0.4s steps(2) infinite;
+    animation: walkLeft 1s steps(10) infinite;
 }
 
 #character.walking-right {
-    animation: walkRight 0.4s steps(2) infinite;
+    animation: walkRight 1s steps(10) infinite;
+    transform: translate(-50%, -50%) scaleX(-1);
 }
 
 @keyframes walkLeft {
-    0%, 100% { background-image: url('assets/images/Dang-left.png'); }
-    50% { background-image: url('assets/images/Dang-move-left.png'); }
+    0% { background-image: url('assets/images/move/1.png'); }
+    10% { background-image: url('assets/images/move/2.png'); }
+    20% { background-image: url('assets/images/move/3.png'); }
+    30% { background-image: url('assets/images/move/4.png'); }
+    40% { background-image: url('assets/images/move/5.png'); }
+    50% { background-image: url('assets/images/move/6.png'); }
+    60% { background-image: url('assets/images/move/7.png'); }
+    70% { background-image: url('assets/images/move/8.png'); }
+    80% { background-image: url('assets/images/move/9.png'); }
+    90%, 100% { background-image: url('assets/images/move/10.png'); }
 }
 
 @keyframes walkRight {
-    0%, 100% { background-image: url('assets/images/Dang-right.png'); }
-    50% { background-image: url('assets/images/Dang-move-right.png'); }
+    0% { background-image: url('assets/images/move/1.png'); }
+    10% { background-image: url('assets/images/move/2.png'); }
+    20% { background-image: url('assets/images/move/3.png'); }
+    30% { background-image: url('assets/images/move/4.png'); }
+    40% { background-image: url('assets/images/move/5.png'); }
+    50% { background-image: url('assets/images/move/6.png'); }
+    60% { background-image: url('assets/images/move/7.png'); }
+    70% { background-image: url('assets/images/move/8.png'); }
+    80% { background-image: url('assets/images/move/9.png'); }
+    90%, 100% { background-image: url('assets/images/move/10.png'); }
 }
 
 #character.moving-left {
@@ -60,7 +81,7 @@ body {
 }
 
 #character.moving-right {
-    transform: translate(-50%, -50%);
+    transform: translate(-50%, -50%) scaleX(-1);
 }
 
 #character.is-moving {
@@ -125,37 +146,6 @@ body {
     100% { opacity: 0; width: 5px; height: 5px; }
 }
 
-.map-controls {
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 1000;
-    display: flex;
-    gap: 10px;
-}
-
-.map-controls button {
-    padding: 10px 20px;
-    background: rgba(0, 0, 0, 0.7);
-    color: white;
-    border: 1px solid white;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 16px;
-    font-family: Arial, sans-serif;
-    transition: background-color 0.3s, transform 0.2s;
-}
-
-.map-controls button:hover {
-    background: rgba(50, 50, 50, 0.9);
-    transform: scale(1.05);
-}
-
-.map-controls button:active {
-    transform: scale(0.95);
-}
-
 /* CSS cho các item trong game */
 .game-item {
     position: absolute;
@@ -185,8 +175,8 @@ body {
 /* CSS cho inventory */
 .inventory {
     position: fixed;
-    top: 20px;
-    right: 20px;
+    bottom: 20px;
+    left: 20px;
     width: 250px;
     background: rgba(0, 0, 0, 0.7);
     border-radius: 10px;
@@ -194,8 +184,7 @@ body {
     padding: 10px;
     z-index: 1001;
     font-family: Arial, sans-serif;
-    transform: translateX(260px);
-    transition: transform 0.3s ease-in-out;
+    display: none;
 }
 
 .inventory-open {
@@ -237,14 +226,17 @@ body {
 
 .inventory-toggle {
     position: fixed;
-    top: 20px;
-    right: 20px;
-    width: 50px;
-    height: 50px;
-    background-color: rgba(0, 0, 0, 0.7);
-    color: white;
+    bottom: 5px;
+    left: 20px;
+    width: 150px;
+    height: 150px;
+
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-color: transparent;
     border: none;
-    border-radius: 50%;
+    padding: 0;
     font-size: 24px;
     cursor: pointer;
     z-index: 1002;
@@ -253,7 +245,6 @@ body {
 
 .inventory-toggle:hover {
     transform: scale(1.1);
-    background-color: rgba(50, 50, 50, 0.9);
 }
 
 .inventory-toggle.has-items {
@@ -266,42 +257,171 @@ body {
     100% { transform: scale(1); }
 }
 
-.map-menu-button {
-    left: 80px;
-}
-
-.map-dropdown {
-    position: absolute;
-    top: 45px;
+/* Game Menu Styles */
+.game-menu {
+    position: fixed;
+    top: 0;
     left: 0;
-    background: rgba(0, 0, 0, 0.8);
-    border-radius: 5px;
-    display: none;
-    flex-direction: column;
-    min-width: 120px;
-    z-index: 1001;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-}
-
-.map-dropdown.show {
+    width: 100vw;
+    height: 100vh;
+    background-image: url('assets/images/menu/menu.png');
+    background-size: cover;
+    background-position: center;
     display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    z-index: 9999;
+    font-family: 'Saira', sans-serif;
 }
 
-.map-item {
-    padding: 10px 15px;
+
+.game-menu-buttons {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    width: 100%;
+    padding-top: 64vh;
+}
+
+.game-menu-button {
+    margin-bottom: 10px;
+    padding: 0 15px;
+    font-size: 24px;
     color: white;
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    transition: color 0.3s ease;
+    font-family: 'Saira', sans-serif;
+    font-weight: 500;
+    letter-spacing: 0;
+    text-transform: uppercase;
+    line-height: 1.2;
+}
+
+.game-menu-button:hover {
+    color: #ff0000;
+}
+
+
+.game-menu-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    align-items: center;
+}
+
+.game-menu-button {
+    line-height: 1;
+    padding: 2px 15px;
+}
+
+/* CSS cho màn hình credit */
+.credit-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-image: url('assets/images/menu/credit.png');
+    background-size: cover;
+    background-position: center;
+    display: none;
+    z-index: 10000;
+    font-family: 'Saira', sans-serif;
+}
+
+.credit-screen.show {
+    display: block;
+}
+
+.credit-close {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    width: 100px;
+    height: 100px;
+    padding: 0;
     background: transparent;
     border: none;
-    text-align: left;
     cursor: pointer;
-    font-family: Arial, sans-serif;
-    transition: background-color 0.2s;
+    transition: transform 0.3s;
+    background-image: url('assets/images/button/back.png');
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    transform: scaleX(-1);
 }
 
-.map-item:hover {
-    background-color: rgba(255, 255, 255, 0.2);
+.credit-close:hover {
+    transform: scaleX(-1) scale(1.1);
+    background-color: transparent;
 }
 
-.map-item:active {
-    background-color: rgba(255, 255, 255, 0.3);
+.game-back-button {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    width: 50px;
+    height: 50px;
+    padding: 0;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.3s;
+    background-image: url('assets/images/button/back.png');
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    transform: scaleX(-1);
+    z-index: 1000;
+}
+
+.game-back-button:hover {
+    transform: scaleX(-1) scale(1.1);
+}
+
+.loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-image: url('assets/images/menu/loading.png');
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    z-index: 10000;
+    display: none;
+}
+
+.loading-text {
+    color: white;
+    font-size: 24px;
+    margin-bottom: 20px;
+    font-family: 'Saira', sans-serif;
+    text-align: center;
+}
+
+.progress-bar {
+    width: 400px;
+    margin-bottom: 120px;
+    height: 20px;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 10px;
+    overflow: hidden;
+    position: relative;
+}
+
+.progress-fill {
+    width: 0%;
+    height: 100%;
+    background: linear-gradient(90deg, #ffffff, #ffffff);
+    border-radius: 10px;
+    transition: width 0.3s ease;
 } 

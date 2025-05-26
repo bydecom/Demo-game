@@ -2,8 +2,8 @@ export default class Player {
     constructor(game) {
         this.game = game;
         this.element = document.getElementById('character');
-        this.width = 685;
-        this.height = 1300;
+        this.width = 885;
+        this.height = 1500;
         
         // Lấy vị trí bắt đầu từ map hiện tại
         this.x = this.game.map.getPlayerStartX();
@@ -22,7 +22,7 @@ export default class Player {
         this.element.style.top = this.y + 'px';
         
         // Khởi tạo animation mặc định
-        this.element.style.backgroundImage = "url('assets/images/Dang-left.png')";
+        this.element.style.backgroundImage = "url('assets/images/move/1.png')";
         
         // Xử lý điều khiển bàn phím
         this.initKeyboardControls();
@@ -57,26 +57,25 @@ export default class Player {
         });
     }
     
-    resetPosition(newX, newY) {
-        // Hủy animation và trạng thái di chuyển
-        this.stopMovement();
+    resetPosition(x, y) {
+        // Reset vị trí
+        this.x = x;
+        this.y = y;
         
-        // Đặt vị trí mới
-        this.x = newX;
-        
-        // Nếu có giá trị Y mới, cập nhật
-        if (newY !== undefined) {
-            this.y = newY;
-        }
-        
-        this.element.style.transition = 'none'; // Tắt transition để move ngay lập tức
+        // Cập nhật style
+        this.element.style.transition = 'none';
         this.element.style.left = this.x + 'px';
         this.element.style.top = this.y + 'px';
         
-        // Khôi phục transition sau 10ms
+        // Reset các trạng thái khác
+        this.isMoving = false;
+        this.element.classList.remove('is-moving');
+        this.stopAnimation();
+        
+        // Khôi phục transition sau khi đã đặt vị trí
         setTimeout(() => {
             this.element.style.transition = 'left 0.8s cubic-bezier(0.22, 1, 0.36, 1)';
-        }, 10);
+        }, 50);
     }
     
     moveToPosition(targetX) {
@@ -245,9 +244,9 @@ export default class Player {
         
         // Giữ class direction và set ảnh tĩnh theo hướng cuối cùng
         if (this.lastDirection === 'right') {
-            this.element.style.backgroundImage = "url('assets/images/Dang-right.png')";
+            this.element.style.backgroundImage = "url('assets/images/move/1.png')";
         } else {
-            this.element.style.backgroundImage = "url('assets/images/Dang-left.png')";
+            this.element.style.backgroundImage = "url('assets/images/move/1.png')";
         }
     }
 
@@ -266,5 +265,15 @@ export default class Player {
         if (this.isMoving) {
             this.animationFrameId = requestAnimationFrame(() => this.trackPlayerMovement());
         }
+    }
+
+    resetPosition() {
+        // Reset vị trí player về điểm bắt đầu
+        this.element.style.left = '50%';
+        this.isMoving = false;
+        this.element.classList.remove('walking-left', 'walking-right', 'is-moving');
+        
+        // Reset animation và hướng nhìn
+        this.element.style.backgroundImage = "url('assets/images/move/1.png')";
     }
 } 

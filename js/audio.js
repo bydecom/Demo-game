@@ -62,4 +62,15 @@ export default class AudioManager {
         this.itemSound.currentTime = 0;
         this.itemSound.play();
     }
+    
+    resetAudio() {
+        // Reset âm thanh về trạng thái ban đầu
+        this.bgMusic.currentTime = 0;
+        this.walkSound.currentTime = 0;
+        
+        // Đảm bảo nhạc nền đang phát
+        if (!this.isMuted) {
+            this.bgMusic.play();
+        }
+    }
 } 

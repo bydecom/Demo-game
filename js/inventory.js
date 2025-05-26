@@ -27,13 +27,18 @@ export default class Inventory {
         // Thêm nút mở/đóng inventory
         const toggleButton = document.createElement('button');
         toggleButton.className = 'inventory-toggle';
-        toggleButton.textContent = '🎒';
         
-        // Thêm stopPropagation cho nút
+        // Tạo hình ảnh cho nút
+        const baloImage = document.createElement('img');
+        baloImage.src = 'assets/images/items/balo.png';
+        baloImage.style.width = '100%';
+        baloImage.style.height = '100%';
+        baloImage.style.objectFit = 'contain';
+        toggleButton.appendChild(baloImage);
+        
+        // Chỉ thêm sự kiện ngăn chặn click lan truyền
         toggleButton.addEventListener('click', (e) => {
-            // Ngăn chặn sự kiện click lan truyền đến game container
             e.stopPropagation();
-            this.inventoryElement.classList.toggle('inventory-open');
         });
         
         // Thêm vào game
@@ -131,5 +136,16 @@ export default class Inventory {
         
         // Cập nhật UI
         this.updateUI();
+    }
+    
+    clearItems() {
+        // Xóa tất cả items trong inventory
+        this.items = [];
+        
+        // Xóa tất cả items khỏi UI
+        const itemsContainer = this.inventoryElement.querySelector('.inventory-items');
+        while (itemsContainer.firstChild) {
+            itemsContainer.removeChild(itemsContainer.firstChild);
+        }
     }
 } 

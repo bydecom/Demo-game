@@ -1,3 +1,4 @@
+import Computer from './hints/computer.js';
 import Item from './item.js';
 
 export default class Map {
@@ -8,12 +9,14 @@ export default class Map {
         this.gameWrapper = document.getElementById('game-wrapper');
         this.mapData = this.getMapData();
         this.items = [];
+        this.hints = [];
         
         // Áp dụng thuộc tính map
         this.applyMapProperties();
         
-        // Tạo các item cho map
+        // Tạo các item và hint cho map
         this.createItems();
+        this.createHints();
     }
     
     getMapData(id) {
@@ -31,21 +34,11 @@ export default class Map {
             messages: [
                 "Chào mừng bạn đến với game!",
                 "Hãy khám phá thế giới này!",
-                "Bạn có thể tìm thấy nhiều điều thú vị!",
-                "Hãy thu thập các vật phẩm!",
+                "Bạn có thể tìm thấy nhiều manh mối và vật phẩm thú vị!",
+                "Hãy thu thập vật phẩm và giải mã các bí ẩn!",
                 "Chúc bạn chơi game vui vẻ!"
             ],
             items: [
-                {
-                    id: 'computer',
-                    name: 'máy tính',
-                    x: 5457,
-                    y: 657,
-                    width: 1402,
-                    height: 1362,
-                    image: 'assets/images/items/computer.png',
-                    clickMessage: 'Bạn đã tìm thấy máy tính! Đây là một báu vật quý giá.'
-                },
                 {
                     id: 'sword1',
                     name: 'Thanh kiếm huyền thoại',
@@ -53,9 +46,22 @@ export default class Map {
                     y: 1400,
                     width: 120,
                     height: 150,
-                    image: 'assets/images/items/computer.png',
+                    image: 'assets/images/items/sword.png',
                     clickMessage: 'Thanh kiếm huyền thoại! Người ta đồn rằng nó từng thuộc về một anh hùng vĩ đại.'
                 }
+            ],
+            hints: [
+                {
+                    id: 'computer',
+                    type: 'Computer',
+                    name: 'Máy tính bí ẩn',
+                    x: 5457,
+                    y: 657,
+                    width: 1402,
+                    height: 1362,
+                    image: 'assets/images/items/computer.png'
+                }
+                // Thêm các hints khác ở đây
             ]
         };
     }
@@ -86,12 +92,45 @@ export default class Map {
         }
     }
     
+    createHints() {
+        // Xóa hints cũ nếu có
+        this.clearHints();
+        
+        // Tạo các hints mới từ map data
+        if (this.mapData.hints && this.mapData.hints.length > 0) {
+            this.mapData.hints.forEach(hintData => {
+                let hint;
+                switch(hintData.type) {
+                    case 'Computer':
+                        hint = new Computer({
+                            ...hintData,
+                            game: this.game
+                        });
+                        break;
+                    // Thêm các loại hint khác ở đây
+                    default:
+                        console.warn(`Unknown hint type: ${hintData.type}`);
+                        return;
+                }
+                this.hints.push(hint);
+            });
+        }
+    }
+    
     resetItems() {
         // Xóa items cũ
         this.clearItems();
         
         // Tạo lại items từ map data
         this.createItems();
+    }
+    
+    resetHints() {
+        // Xóa hints cũ
+        this.clearHints();
+        
+        // Tạo lại hints từ map data
+        this.createHints();
     }
     
     clearItems() {
@@ -104,6 +143,18 @@ export default class Map {
         
         // Đặt lại mảng items
         this.items = [];
+    }
+    
+    clearHints() {
+        // Xóa tất cả các hints hiện có khỏi DOM
+        this.hints.forEach(hint => {
+            if (hint.element && hint.element.parentNode) {
+                hint.element.remove();
+            }
+        });
+        
+        // Đặt lại mảng hints
+        this.hints = [];
     }
     
     getWidth() {

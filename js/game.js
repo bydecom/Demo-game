@@ -18,7 +18,7 @@ export default class Game {
         this.eventHandler = new EventHandler();
         this.audioManager = new AudioManager();
         
-        // Khởi tạo inventory trước khi tạo map và items
+        // Khởi tạo inventory trước khi tạo map
         this.inventory = new Inventory(this);
         
         // Khởi tạo map
@@ -239,8 +239,9 @@ export default class Game {
             this.player.element.style.transition = 'left 0.8s cubic-bezier(0.22, 1, 0.36, 1)';
         }
 
-        // Reset map items
+        // Reset map items và hints
         this.map.resetItems();
+        this.map.resetHints();
 
         // Reset camera position
         this.currentScrollX = 0;

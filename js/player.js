@@ -22,7 +22,7 @@ export default class Player {
         this.element.style.top = this.y + 'px';
         
         // Khởi tạo animation mặc định
-        this.element.style.backgroundImage = "url('assets/images/move/1.png')";
+        this.element.style.backgroundImage = "url('assets/images/move2/1.png')";
         
         // Xử lý điều khiển bàn phím
         this.initKeyboardControls();
@@ -36,7 +36,7 @@ export default class Player {
             }
             
             // Điều chỉnh bước di chuyển cho phù hợp với tốc độ cố định
-            const step = 300; // Tăng bước di chuyển để phù hợp với animation dài hơn
+            const step = 900; // Tăng bước di chuyển để phù hợp với animation dài hơn
             const oldX = this.x;
             const oldDirection = this.lastDirection;
             
@@ -132,7 +132,7 @@ export default class Player {
         this.targetX = this.x;
         
         // Cập nhật thời gian di chuyển (tốc độ cố định)
-        const FIXED_SPEED = 500; // px/giây
+        const FIXED_SPEED = 1000; // px/giây
         const duration = distance / FIXED_SPEED;
         
         // Đặt transition với tốc độ cố định
@@ -210,6 +210,7 @@ export default class Player {
     }
     
     startAnimation() {
+        this.game.audioManager.playWalkSound();
         // Xóa tất cả class trước khi thêm mới
         this.element.classList.remove('moving-left', 'moving-right', 'walking-left', 'walking-right');
         
@@ -244,9 +245,9 @@ export default class Player {
         
         // Giữ class direction và set ảnh tĩnh theo hướng cuối cùng
         if (this.lastDirection === 'right') {
-            this.element.style.backgroundImage = "url('assets/images/move/1.png')";
+            this.element.style.backgroundImage = "url('assets/images/move2/1.png')";
         } else {
-            this.element.style.backgroundImage = "url('assets/images/move/1.png')";
+            this.element.style.backgroundImage = "url('assets/images/move2/1.png')";
         }
     }
 
@@ -274,6 +275,6 @@ export default class Player {
         this.element.classList.remove('walking-left', 'walking-right', 'is-moving');
         
         // Reset animation và hướng nhìn
-        this.element.style.backgroundImage = "url('assets/images/move/1.png')";
+        this.element.style.backgroundImage = "url('assets/images/move2/1.png')";
     }
 } 

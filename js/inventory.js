@@ -2,7 +2,37 @@ export default class Inventory {
     constructor(game) {
         this.game = game;
         this.items = [];
+        this.collectedItems = new Set(); // Để theo dõi các item đã thu thập
+        this.maxSlots = 5; // Số lượng slots tối đa
         this.inventoryElement = null;
+        this.isOpen = false;
+        
+        // Kích thước gốc của slot.png
+        this.slotImageWidth = 1899;
+        this.slotImageHeight = 327;
+        this.sidePadding = 60; // Padding hai bên của ảnh gốc
+        
+        // Vị trí slot đầu tiên và khoảng cách giữa các slot
+        const firstSlotX = this.sidePadding + 60; // Vị trí x của slot đầu tiên
+        const slotSpacing = 360; // Khoảng cách cố định giữa các slot
+        
+        // Tọa độ các slot (tính từ góc trái của slot.png)
+        this.slotPositions = [
+            { x: firstSlotX, y: 35 },                    // Slot 1: 120
+            { x: firstSlotX + slotSpacing, y: 35 },     // Slot 2: 495
+            { x: firstSlotX + slotSpacing * 2, y: 35 }, // Slot 3: 870
+            { x: firstSlotX + slotSpacing * 3, y: 35 }, // Slot 4: 1245
+            { x: firstSlotX + slotSpacing * 4, y: 35 }  // Slot 5: 1620
+        ];
+        
+        // Kích thước hiển thị (scale để vừa màn hình)
+        this.displayWidth = 450; // Điều chỉnh kích thước hiển thị
+        this.scale = this.displayWidth / this.slotImageWidth;
+        this.displayHeight = this.slotImageHeight * this.scale;
+        
+        // Kích thước của từng item trong slot
+        this.itemSize = 65; // Kích thước cố định cho items
+        this.itemOffset = 5; // Khoảng cách từ mép slot đến item
         
         // Tạo UI inventory
         this.createInventoryUI();
@@ -12,21 +42,45 @@ export default class Inventory {
         // Tạo container cho inventory
         this.inventoryElement = document.createElement('div');
         this.inventoryElement.className = 'inventory';
+        this.inventoryElement.style.position = 'fixed';
+        this.inventoryElement.style.top = '20px';
+        this.inventoryElement.style.left = '50%';
+        this.inventoryElement.style.transform = 'translateX(-50%)';
+        this.inventoryElement.style.display = 'none';
+        this.inventoryElement.style.width = `${this.displayWidth}px`;
+        this.inventoryElement.style.height = `${this.displayHeight}px`;
+        this.inventoryElement.style.backgroundImage = "url('assets/images/items/slot.png')";
+        this.inventoryElement.style.backgroundSize = 'contain';
+        this.inventoryElement.style.backgroundRepeat = 'no-repeat';
+        this.inventoryElement.style.zIndex = '10';
         
-        // Tạo tiêu đề
-        const title = document.createElement('div');
-        title.className = 'inventory-title';
-        title.textContent = 'Túi đồ';
-        this.inventoryElement.appendChild(title);
-        
-        // Tạo container cho items
-        const itemsContainer = document.createElement('div');
-        itemsContainer.className = 'inventory-items';
-        this.inventoryElement.appendChild(itemsContainer);
+        // Tạo containers cho từng slot
+        this.slotPositions.forEach((pos, index) => {
+            const itemContainer = document.createElement('div');
+            itemContainer.className = 'inventory-item';
+            itemContainer.style.position = 'absolute';
+            itemContainer.style.left = `${pos.x * this.scale + this.itemOffset}px`;
+            itemContainer.style.top = `${pos.y * this.scale + this.itemOffset}px`;
+            itemContainer.style.width = `${this.itemSize}px`;
+            itemContainer.style.height = `${this.itemSize}px`;
+            itemContainer.style.backgroundSize = 'contain';
+            itemContainer.style.backgroundRepeat = 'no-repeat';
+            itemContainer.style.backgroundPosition = 'center';
+            
+            this.inventoryElement.appendChild(itemContainer);
+        });
         
         // Thêm nút mở/đóng inventory
         const toggleButton = document.createElement('button');
         toggleButton.className = 'inventory-toggle';
+        toggleButton.style.position = 'fixed';
+        toggleButton.style.bottom = '20px';
+        toggleButton.style.left = '20px';
+        toggleButton.style.width = '150px';
+        toggleButton.style.height = '150px';
+        toggleButton.style.border = 'none';
+        toggleButton.style.borderRadius = '5px';
+        toggleButton.style.zIndex = '9';
         
         // Tạo hình ảnh cho nút
         const baloImage = document.createElement('img');
@@ -36,9 +90,10 @@ export default class Inventory {
         baloImage.style.objectFit = 'contain';
         toggleButton.appendChild(baloImage);
         
-        // Chỉ thêm sự kiện ngăn chặn click lan truyền
+        // Thêm sự kiện click để mở/đóng inventory
         toggleButton.addEventListener('click', (e) => {
             e.stopPropagation();
+            this.toggleInventory();
         });
         
         // Thêm vào game
@@ -49,103 +104,105 @@ export default class Inventory {
         this.inventoryElement.addEventListener('click', (e) => {
             e.stopPropagation();
         });
+
+        // Thêm sự kiện click bên ngoài để đóng inventory
+        document.addEventListener('click', () => {
+            if (this.isOpen) {
+                this.closeInventory();
+            }
+        });
+    }
+
+    toggleInventory() {
+        if (this.isOpen) {
+            this.closeInventory();
+        } else {
+            this.openInventory();
+        }
+    }
+
+    openInventory() {
+        this.inventoryElement.style.display = 'block';
+        this.isOpen = true;
+    }
+
+    closeInventory() {
+        this.inventoryElement.style.display = 'none';
+        this.isOpen = false;
     }
     
     addItem(item) {
-        // Thêm item vào danh sách
+        if (this.items.length >= this.maxSlots) {
+            this.game.messageManager.showMessage("Túi đồ đã đầy!");
+            return false;
+        }
+
+        // Thêm item vào danh sách và đánh dấu đã thu thập
         this.items.push(item);
+        this.collectedItems.add(item.id);
         
-        // Tạo UI cho item
-        const itemElement = document.createElement('div');
-        itemElement.className = 'inventory-item';
-        itemElement.style.backgroundImage = `url('${item.image}')`;
-        itemElement.title = item.name;
+        // Tìm slot trống đầu tiên
+        const slots = this.inventoryElement.querySelectorAll('.inventory-item');
+        const emptySlot = Array.from(slots).find(slot => !slot.style.backgroundImage || slot.style.backgroundImage === 'none');
         
-        // Hiển thị thông tin khi hover
-        itemElement.addEventListener('mouseover', () => {
-            this.game.messageManager.showMessage(`${item.name}: Đã thu thập`);
-        });
+        if (emptySlot) {
+            // Thêm item vào slot
+            emptySlot.style.backgroundImage = `url('${item.image}')`;
+            emptySlot.title = item.name;
+            
+            // Thêm hover effect
+            emptySlot.addEventListener('mouseover', () => {
+                this.game.messageManager.showMessage(`${item.name}: Đã thu thập`);
+            });
+
+            // Thêm click event cho item
+            if (item.onClick) {
+                emptySlot.addEventListener('click', (e) => {
+                    e.stopPropagation(); // Ngăn sự kiện click lan ra ngoài
+                    item.onClick();
+                });
+            }
+        }
         
-        // Ngăn chặn sự kiện click lan truyền
-        itemElement.addEventListener('click', (e) => {
-            e.stopPropagation();
-        });
-        
-        // Thêm item vào inventory UI
-        const itemsContainer = this.inventoryElement.querySelector('.inventory-items');
-        itemsContainer.appendChild(itemElement);
-        
-        // Lưu reference đến element trong item
-        item.inventoryElement = itemElement;
-        
-        // Cập nhật UI - hiển thị số lượng item
-        this.updateUI();
+        // Hiệu ứng khi có item mới
+        const toggleButton = document.querySelector('.inventory-toggle');
+        toggleButton.classList.add('has-items');
+        setTimeout(() => {
+            toggleButton.classList.remove('has-items');
+        }, 1000);
+
+        return true;
     }
     
     removeItem(itemId) {
-        // Tìm item theo ID
         const index = this.items.findIndex(item => item.id === itemId);
         
         if (index !== -1) {
-            const item = this.items[index];
-            
             // Xóa item khỏi danh sách
             this.items.splice(index, 1);
-            
-            // Xóa UI của item
-            if (item.inventoryElement) {
-                item.inventoryElement.remove();
-            }
+            this.collectedItems.delete(itemId);
             
             // Cập nhật UI
-            this.updateUI();
+            const slots = this.inventoryElement.querySelectorAll('.inventory-item');
+            slots[index].style.backgroundImage = 'none';
+            slots[index].title = '';
         }
     }
     
     hasItem(itemId) {
-        return this.items.some(item => item.id === itemId);
-    }
-    
-    updateUI() {
-        // Cập nhật số lượng item
-        const count = this.items.length;
-        
-        // Cập nhật tiêu đề
-        const title = this.inventoryElement.querySelector('.inventory-title');
-        title.textContent = `Túi đồ (${count})`;
-        
-        // Hiệu ứng nếu có item mới
-        if (count > 0) {
-            const toggleButton = document.querySelector('.inventory-toggle');
-            toggleButton.classList.add('has-items');
-            
-            // Xóa class sau 1 giây
-            setTimeout(() => {
-                toggleButton.classList.remove('has-items');
-            }, 1000);
-        }
-    }
-    
-    clear() {
-        // Xóa tất cả items
-        this.items = [];
-        
-        // Xóa tất cả item elements trong UI
-        const itemsContainer = this.inventoryElement.querySelector('.inventory-items');
-        itemsContainer.innerHTML = '';
-        
-        // Cập nhật UI
-        this.updateUI();
+        return this.collectedItems.has(itemId);
     }
     
     clearItems() {
-        // Xóa tất cả items trong inventory
+        // Xóa tất cả items
         this.items = [];
+        this.collectedItems.clear();
         
-        // Xóa tất cả items khỏi UI
-        const itemsContainer = this.inventoryElement.querySelector('.inventory-items');
-        while (itemsContainer.firstChild) {
-            itemsContainer.removeChild(itemsContainer.firstChild);
-        }
+        // Xóa items khỏi tất cả các slots
+        const slots = this.inventoryElement.querySelectorAll('.inventory-item');
+        slots.forEach(slot => {
+            slot.style.backgroundImage = 'none';
+            slot.title = '';
+        });
     }
 } 

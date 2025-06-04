@@ -22,7 +22,6 @@ export default class Hint {
         this.element.style.backgroundImage = `url('${this.image}')`;
         this.element.style.backgroundSize = 'contain';
         this.element.style.backgroundRepeat = 'no-repeat';
-        this.element.style.cursor = 'pointer';
         this.element.style.zIndex = '1';
         
         // Thêm hint vào game container

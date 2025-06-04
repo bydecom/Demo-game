@@ -6,12 +6,14 @@ export default class AudioManager {
         this.bgMusic.loop = true;
         this.bgMusic.src = 'assets/audio/background-music.mp3';
         
-        this.walkSound = document.createElement('audio');
-        this.walkSound.id = 'walkSound';
-        this.walkSound.src = 'assets/audio/footstep.mp3';
+        this.walkSound = new Audio('assets/audio/footstep.mp3');
+        this.walkSound.volume = 0.3;
         
         this.itemSound = document.createElement('audio');
         this.itemSound.src = 'assets/audio/item-pickup.mp3';
+        
+        this.bookSound = new Audio('assets/audio/book_sound.mp3');
+        this.bookSound.volume = 0.5;
         
         // Thêm vào DOM
         document.getElementById('game-wrapper').appendChild(this.bgMusic);
@@ -19,7 +21,7 @@ export default class AudioManager {
         
         // Thiết lập âm lượng
         this.bgMusic.volume = 0.3;
-        this.walkSound.volume = 0.5;
+        this.walkSound.volume = 0.3;
         this.itemSound.volume = 0.7;
         
         this.isMuted = false;
@@ -38,8 +40,6 @@ export default class AudioManager {
     createAudioControl() {
         // Tạo nút mới thay vì sử dụng nút có sẵn trong HTML
         const audioButton = document.createElement('button');
-        audioButton.className = 'audio-control audio-control-left';
-        audioButton.textContent = '🔊';
         
         // Thêm sự kiện click với stopPropagation
         audioButton.addEventListener('click', (e) => {
@@ -60,6 +60,7 @@ export default class AudioManager {
         this.bgMusic.muted = this.isMuted;
         this.walkSound.muted = this.isMuted;
         this.itemSound.muted = this.isMuted;
+        this.bookSound.muted = this.isMuted;
         this.audioControl.textContent = this.isMuted ? '🔇' : '🔊';
     }
     
@@ -71,6 +72,11 @@ export default class AudioManager {
     playItemSound() {
         this.itemSound.currentTime = 0;
         this.itemSound.play();
+    }
+    
+    playBookSound() {
+        this.bookSound.currentTime = 0;
+        this.bookSound.play();
     }
     
     resetAudio() {

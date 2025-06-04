@@ -1,4 +1,5 @@
 import Computer from './hints/computer.js';
+import Gas from './hints/gas.js';
 import Item from './item.js';
 
 export default class Map {
@@ -55,13 +56,22 @@ export default class Map {
                     id: 'computer',
                     type: 'Computer',
                     name: 'Máy tính bí ẩn',
-                    x: 5457,
-                    y: 657,
+                    x: 5450,
+                    y: 650,
                     width: 1402,
                     height: 1362,
                     image: 'assets/images/items/computer.png'
+                },
+                {
+                    id: 'gas',
+                    type: 'Gas',
+                    name: 'Bếp gas cũ',
+                    x: 5130,
+                    y: 920,
+                    width: 353,
+                    height: 243,
+                    image: 'assets/images/items/ga_map.png'
                 }
-                // Thêm các hints khác ở đây
             ]
         };
     }
@@ -107,7 +117,12 @@ export default class Map {
                             game: this.game
                         });
                         break;
-                    // Thêm các loại hint khác ở đây
+                    case 'Gas':
+                        hint = new Gas({
+                            ...hintData,
+                            game: this.game
+                        });
+                        break;
                     default:
                         console.warn(`Unknown hint type: ${hintData.type}`);
                         return;

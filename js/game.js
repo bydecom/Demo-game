@@ -5,6 +5,7 @@ import MessageManager from './message.js';
 import Map from './map.js';
 import Inventory from './inventory.js';
 import Menu from './menu.js';
+import Diary from './diary.js';
 
 export default class Game {
     constructor() {
@@ -30,6 +31,9 @@ export default class Game {
         // Khởi tạo player
         this.player = new Player(this);
         
+        // Khởi tạo diary
+        this.diary = new Diary(this);
+        
         // Thiết lập scale ban đầu
         this.gameContainer.style.transformOrigin = 'left top';
         this.gameContainer.style.transform = `scale(${this.scale})`;
@@ -42,11 +46,14 @@ export default class Game {
         
         // Thêm biến để lưu trữ event listener
         this.clickHandler = null;
-        
+        this.updateCamera();
         // Khởi tạo các event listener
         this.initEventListeners();
         
         this.cameraAnimationId = null;
+
+        // Khởi tạo game với nhật ký
+        this.initializeGame();
     }
     
     initEventListeners() {
@@ -55,6 +62,11 @@ export default class Game {
             // Nếu nhân vật đang di chuyển thì bỏ qua click
             if (this.player.isMoving) {
                 return;
+            }
+
+            // Kiểm tra xem menu có đang hiển thị không
+            if (this.menu && this.menu.menuElement.style.display !== 'none') {
+                return; // Không làm gì nếu menu đang hiển thị
             }
             
             // Kiểm tra xem click có trúng vào item không
@@ -251,6 +263,9 @@ export default class Game {
         this.gameContainer.offsetHeight;
         // Bật lại animation cho camera
         this.gameContainer.style.transition = 'transform 0.8s cubic-bezier(0.22, 1, 0.36, 1)';
+
+        // Khởi tạo lại nhật ký trong inventory
+        this.initializeGame();
     }
     
     // Thêm phương thức để enable click events
@@ -261,5 +276,16 @@ export default class Game {
     // Thêm phương thức để disable click events
     disableGameEvents() {
         this.gameWrapper.removeEventListener('click', this.clickHandler);
+    }
+
+    initializeGame() {
+        // Thêm nhật ký vào inventory khi bắt đầu game
+        const diaryItem = {
+            id: 'diary',
+            name: 'Nhật ký',
+            image: 'assets/images/items/nhatky/sach.png',
+            onClick: () => this.diary.openDiary()
+        };
+        this.inventory.addItem(diaryItem);
     }
 } 

@@ -4,6 +4,10 @@ export default class Menu {
         // Khởi tạo loading screen
         this.loadingScreen = new LoadingScreen();
         this.menuElement = null;
+        this.currentLanguageIndex = 0; // 0: TIẾNG VIỆT, 1: TIẾNG ANH
+        this.languages = ['TIẾNG VIỆT', 'TIẾNG ANH'];
+        this.currentGuideIndex = 0; // 0: CÓ, 1: KHÔNG
+        this.guides = ['CÓ', 'KHÔNG'];
         this.createMenu();
     }
 
@@ -24,7 +28,6 @@ export default class Menu {
             { text: 'New Game', onClick: () => this.startGame() },
             { text: 'Continue', onClick: () => this.continueGame() },
             { text: 'Setting', onClick: () => this.openSettings() },
-            { text: 'Controls', onClick: () => this.openControls() },
             { text: 'Credit', onClick: () => this.openCredits() },
             { text: 'Quit', onClick: () => this.quitGame() }
         ];
@@ -143,8 +146,208 @@ export default class Menu {
     }
 
     openSettings() {
-        console.log('Opening settings...');
-        // Implement settings logic
+        // Tạo màn hình settings nếu chưa tồn tại
+        if (!this.settingsScreen) {
+            this.settingsScreen = document.createElement('div');
+            this.settingsScreen.className = 'settings-screen'; // Class mới cho CSS
+            
+            // Tạo nút đóng
+            const closeButton = document.createElement('button');
+            closeButton.className = 'credit-close'; // Sử dụng lại class credit-close cho style nút back
+            closeButton.addEventListener('click', () => {
+                this.settingsScreen.classList.remove('show');
+            });
+            
+            this.settingsScreen.appendChild(closeButton);
+            this.game.gameWrapper.appendChild(this.settingsScreen);
+        }
+        
+        // Xóa nội dung cũ để tránh trùng lặp khi mở lại
+        this.settingsScreen.innerHTML = '';
+
+        // Tạo nút đóng
+        const closeButton = document.createElement('button');
+        closeButton.className = 'credit-close';
+        closeButton.addEventListener('click', () => {
+            this.settingsScreen.classList.remove('show');
+        });
+        this.settingsScreen.appendChild(closeButton);
+
+        // Tạo container cho nội dung cài đặt
+        const settingsContent = document.createElement('div');
+        settingsContent.className = 'settings-content';
+
+        // 1. Ngôn ngữ
+        settingsContent.appendChild(this.createOption('NGÔN NGỮ', this.languages[this.currentLanguageIndex], (direction) => this.toggleOption('language', direction)));
+
+        // 2. Hướng dẫn
+        settingsContent.appendChild(this.createOption('HƯỚNG DẪN', this.guides[this.currentGuideIndex], (direction) => this.toggleOption('guide', direction)));
+
+        // 3. Âm thanh (Slider)
+        const soundOption = this.createSliderOption('ÂM THANH', 'sound');
+        soundOption.classList.add('settings-option-sound-spacing'); // Thêm class mới
+        settingsContent.appendChild(soundOption);
+
+        // 4. Hiệu ứng âm thanh (Slider)
+        settingsContent.appendChild(this.createSliderOption('HIỆU ỨNG ÂM THANH', 'sound-effects'));
+
+        // 5. Độ nhạy (Slider)
+        settingsContent.appendChild(this.createSliderOption('ĐỘ NHẠY', 'sensitivity'));
+
+        this.settingsScreen.appendChild(settingsContent);
+        
+        // Hiển thị màn hình settings
+        this.settingsScreen.classList.add('show');
+    }
+
+    // Helper function để tạo option với mũi tên
+    createOption(labelText, initialValue, onToggle) {
+        const optionDiv = document.createElement('div');
+        optionDiv.className = 'settings-option';
+
+        const label = document.createElement('span');
+        label.className = 'settings-label';
+        label.textContent = labelText;
+        optionDiv.appendChild(label);
+
+        const valueContainer = document.createElement('div');
+        valueContainer.className = 'settings-value-container';
+        
+        const leftArrow = document.createElement('button');
+        leftArrow.className = 'settings-arrow settings-arrow-left';
+        leftArrow.innerHTML = '<img src="assets/images/setting/Setting2.png" class="arrow-icon"/>';
+        leftArrow.addEventListener('click', () => onToggle('prev'));
+        valueContainer.appendChild(leftArrow);
+
+        const valueSpan = document.createElement('span');
+        valueSpan.className = 'settings-value';
+        valueSpan.textContent = initialValue;
+        valueContainer.appendChild(valueSpan);
+
+        const rightArrow = document.createElement('button');
+        rightArrow.className = 'settings-arrow settings-arrow-right';
+        rightArrow.innerHTML = '<img src="assets/images/setting/Setting2.png" class="arrow-icon flipped"/>';
+        rightArrow.addEventListener('click', () => onToggle('next'));
+        valueContainer.appendChild(rightArrow);
+
+        optionDiv.appendChild(valueContainer);
+
+        // Store a reference to the valueSpan for later updates
+        optionDiv.valueSpan = valueSpan;
+
+        return optionDiv;
+    }
+
+    // New method to handle toggling options
+    toggleOption(optionType, direction) {
+        let currentIndex;
+        let optionsArray;
+        let valueSpan;
+
+        if (optionType === 'language') {
+            currentIndex = this.currentLanguageIndex;
+            optionsArray = this.languages;
+            valueSpan = this.settingsScreen.querySelector('.settings-option:nth-child(1) .settings-value');
+        } else if (optionType === 'guide') {
+            currentIndex = this.currentGuideIndex;
+            optionsArray = this.guides;
+            valueSpan = this.settingsScreen.querySelector('.settings-option:nth-child(2) .settings-value');
+        }
+
+        if (!optionsArray || !valueSpan) return;
+
+        if (direction === 'next') {
+            currentIndex = (currentIndex + 1) % optionsArray.length;
+        } else if (direction === 'prev') {
+            currentIndex = (currentIndex - 1 + optionsArray.length) % optionsArray.length;
+        }
+
+        // Update the displayed value
+        valueSpan.textContent = optionsArray[currentIndex];
+
+        // Update the internal state
+        if (optionType === 'language') {
+            this.currentLanguageIndex = currentIndex;
+            console.log(`Language set to: ${this.languages[this.currentLanguageIndex]}`);
+        } else if (optionType === 'guide') {
+            this.currentGuideIndex = currentIndex;
+            console.log(`Guide set to: ${this.guides[this.currentGuideIndex]}`);
+        }
+    }
+
+    // Helper function để tạo slider option
+    createSliderOption(labelText, sliderId) {
+        const optionDiv = document.createElement('div');
+        optionDiv.className = 'settings-option';
+
+        const label = document.createElement('span');
+        label.className = 'settings-label';
+        label.textContent = labelText;
+        optionDiv.appendChild(label);
+
+        const sliderContainer = document.createElement('div');
+        sliderContainer.className = 'slider-container';
+
+        const sliderTrack = document.createElement('div');
+        sliderTrack.className = 'slider-track';
+        sliderTrack.id = `slider-${sliderId}-track`;
+        sliderTrack.style.backgroundImage = 'url("assets/images/setting/Setting1.png")';
+        sliderContainer.appendChild(sliderTrack);
+
+        const sliderThumb = document.createElement('div');
+        sliderThumb.className = 'slider-thumb';
+        sliderThumb.id = `slider-${sliderId}-thumb`;
+        sliderThumb.style.backgroundImage = 'url("assets/images/setting/Setting3.png")';
+        sliderContainer.appendChild(sliderThumb);
+
+        optionDiv.appendChild(sliderContainer);
+
+        // Thêm chức năng kéo cho slider
+        let isDragging = false;
+        let initialMouseX;
+        let initialThumbX;
+
+        sliderThumb.addEventListener('mousedown', (e) => {
+            e.preventDefault(); // Ngăn chặn hành vi mặc định (chọn văn bản)
+            isDragging = true;
+            initialMouseX = e.clientX;
+            initialThumbX = sliderThumb.offsetLeft; // Vị trí hiện tại của thumb
+
+            const onMouseMove = (moveEvent) => {
+                if (!isDragging) return;
+
+                const dx = moveEvent.clientX - initialMouseX;
+                let newLeft = initialThumbX + dx;
+
+                // Giới hạn nút kéo trong phạm vi track
+                const trackWidth = sliderTrack.offsetWidth;
+                const thumbWidth = sliderThumb.offsetWidth;
+
+                // Trừ thumbWidth / 2 vì thumb được căn giữa bằng transformX(-50%)
+                // Nên vị trí left của nó phải đi từ 0 đến trackWidth
+                newLeft = Math.max(0, Math.min(newLeft, trackWidth));
+
+                sliderThumb.style.left = `${(newLeft / trackWidth) * 100}%`;
+
+                // TODO: Cập nhật giá trị setting tương ứng dựa trên vị trí slider
+                // Ví dụ: const value = (newLeft / trackWidth) * 100;
+                // console.log(`Slider ${sliderId}: ${value.toFixed(2)}%`);
+            };
+
+            const onMouseUp = () => {
+                isDragging = false;
+                document.removeEventListener('mousemove', onMouseMove);
+                document.removeEventListener('mouseup', onMouseUp);
+            };
+
+            document.addEventListener('mousemove', onMouseMove);
+            document.addEventListener('mouseup', onMouseUp);
+        });
+
+        // Thiết lập vị trí ban đầu của thumb (ví dụ: 50%)
+        sliderThumb.style.left = '50%';
+
+        return optionDiv;
     }
 
     openControls() {

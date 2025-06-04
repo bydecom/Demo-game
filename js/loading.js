@@ -1,12 +1,11 @@
 class LoadingScreen {
     constructor() {
         this.loadingTexts = [
-            "Đang chuẩn bị cuộc phiêu lưu của bạn...",
-            "Đang tải thế giới game...",
-            "Đang khởi tạo nhân vật...",
-            "Đang thiết lập môi trường...",
-            "Đang nạp dữ liệu game...",
-            // Thêm các text loading khác ở đây
+            "Mẹo: Nhật ký có thể mang lại một vài gợi ý, kèm theo đó là sự thật xảy ra đằng sau.",
+            "Mẹo: Hãy khám phá mọi ngóc ngách trong game.",
+            "Mẹo: Đừng bỏ lỡ bất kỳ manh mối nào.",
+            "Mẹo: Mỗi vật phẩm đều có ý nghĩa riêng của nó.",
+            "Mẹo: Hãy chú ý đến những chi tiết nhỏ nhất.",
         ];
         
         this.createLoadingScreen();
@@ -17,10 +16,10 @@ class LoadingScreen {
         this.element = document.createElement('div');
         this.element.className = 'loading-screen';
 
-        // Tạo text element
-        this.textElement = document.createElement('div');
-        this.textElement.className = 'loading-text';
-        
+        // Tạo container cho các elements
+        this.container = document.createElement('div');
+        this.container.className = 'loading-elements-container';
+
         // Tạo progress bar
         this.progressBar = document.createElement('div');
         this.progressBar.className = 'progress-bar';
@@ -28,10 +27,25 @@ class LoadingScreen {
         this.progressFill = document.createElement('div');
         this.progressFill.className = 'progress-fill';
         
+        // Tạo loading text
+        this.loadingTextElement = document.createElement('div');
+        this.loadingTextElement.className = 'loading-text';
+        this.loadingTextElement.textContent = 'LOADING...';
+        
+        // Tạo tip text element
+        this.tipElement = document.createElement('div');
+        this.tipElement.className = 'loading-text tip-text';
+        
         // Ghép các element lại với nhau
         this.progressBar.appendChild(this.progressFill);
-        this.element.appendChild(this.textElement);
-        this.element.appendChild(this.progressBar);
+        
+        // Thêm tất cả elements vào container
+        this.container.appendChild(this.progressBar);
+        this.container.appendChild(this.loadingTextElement);
+        this.container.appendChild(this.tipElement);
+        
+        // Thêm container vào loading screen
+        this.element.appendChild(this.container);
         
         // Thêm vào body
         document.body.appendChild(this.element);
@@ -44,10 +58,14 @@ class LoadingScreen {
 
     show() {
         this.element.style.display = 'flex';
-        this.textElement.textContent = this.getRandomText();
+        this.tipElement.textContent = this.getRandomText();
         this.progress = 0;
         this.progressFill.style.width = '0%';
-        this.startLoading();
+        
+        // Ensure layout is computed before starting animation
+        requestAnimationFrame(() => {
+            this.startLoading();
+        });
     }
 
     hide() {
@@ -87,21 +105,21 @@ class LoadingScreen {
 }
 
 // Sử dụng trong game.js
-const loadingScreen = new LoadingScreen();
+// const loadingScreen = new LoadingScreen(); // Removed global instance
 
 // Thêm vào các event listener cho nút New Game và Continue
-document.querySelector('.new-game-button').addEventListener('click', () => {
-    loadingScreen.onLoadingComplete = () => {
-        // Code để bắt đầu game mới
-        startNewGame();
-    };
-    loadingScreen.show();
-});
+// document.querySelector('.new-game-button').addEventListener('click', () => { // Removed event listener
+//     loadingScreen.onLoadingComplete = () => {
+//         // Code để bắt đầu game mới
+//         startNewGame();
+//     };
+//     loadingScreen.show();
+// });
 
-document.querySelector('.continue-button').addEventListener('click', () => {
-    loadingScreen.onLoadingComplete = () => {
-        // Code để tiếp tục game
-        continueGame();
-    };
-    loadingScreen.show();
-}); 
+// document.querySelector('.continue-button').addEventListener('click', () => { // Removed event listener
+//     loadingScreen.onLoadingComplete = () => {
+//         // Code để tiếp tục game
+//         continueGame();
+//     };
+//     loadingScreen.show();
+// }); 

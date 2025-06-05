@@ -4,27 +4,23 @@ export default class Gas extends Hint {
     constructor(config) {
         super(config);
         this.currentStep = 1;
-        this.maxSteps = 3;
         this.modalCreated = false;
-        
-        // Tạo item gas để thêm vào inventory sau khi hoàn thành
-        this.gasItem = {
-            id: 'gas_item',
-            name: 'Bình gas',
-            image: 'assets/images/items/gas_item.png',
-            clickMessage: 'Bạn đã tìm thấy bình gas!'
-        };
+        this.gasInstalled = false;
     }
 
     onClick() {
         if (!this.modalCreated) {
             this.createModal();
         }
+        if (this.gasInstalled) {
+            this.currentStep = 2;
+        } else {
+            this.currentStep = 1;
+        }
         this.showModal();
     }
 
     createModal() {
-        // Tạo overlay mờ
         this.overlay = document.createElement('div');
         this.overlay.className = 'hint-overlay';
         this.overlay.style.position = 'fixed';
@@ -38,23 +34,19 @@ export default class Gas extends Hint {
         this.overlay.style.alignItems = 'center';
         this.overlay.style.zIndex = '1000';
 
-        // Tạo container cho hình ảnh hint
         this.hintContainer = document.createElement('div');
         this.hintContainer.className = 'hint-container';
         this.hintContainer.style.position = 'relative';
         this.hintContainer.style.maxWidth = '80%';
         this.hintContainer.style.maxHeight = '80%';
 
-        // Tạo hình ảnh hint
         this.hintImage = document.createElement('img');
         this.hintImage.style.maxWidth = '100%';
         this.hintImage.style.maxHeight = '100%';
         this.hintImage.style.objectFit = 'contain';
         
-        // Thêm sự kiện click cho hình ảnh
         this.hintImage.addEventListener('click', () => this.nextStep());
 
-        // Tạo nút đóng
         this.closeButton = document.createElement('button');
         this.closeButton.className = 'hint-close-button';
         this.closeButton.style.position = 'absolute';
@@ -70,13 +62,14 @@ export default class Gas extends Hint {
         this.closeButton.style.backgroundColor = 'transparent';
         this.closeButton.addEventListener('click', () => this.hideModal());
 
-        // Ghép các phần tử lại với nhau
         this.hintContainer.appendChild(this.hintImage);
         this.hintContainer.appendChild(this.closeButton);
         this.overlay.appendChild(this.hintContainer);
         document.body.appendChild(this.overlay);
 
         this.modalCreated = true;
+
+        this.setupDragAndDrop();
     }
 
     showModal() {
@@ -89,36 +82,63 @@ export default class Gas extends Hint {
     }
 
     nextStep() {
-        if (this.currentStep < this.maxSteps) {
-            this.currentStep++;
+        if (this.currentStep === 1) {
+            if (this.gasInstalled) {
+                this.currentStep = 2;
+            } else {
+                this.currentStep = 3;
+            }
             this.updateHintImage();
-        } else if (this.currentStep === this.maxSteps) {
-            // Thêm item vào inventory
-            if (this.game.inventory) {
-                const item = {
-                    ...this.gasItem,
-                    game: this.game
-                };
-                this.game.inventory.addItem(item);
-            }
-            
-            // Hiển thị thông báo
-            this.game.messageManager.showMessage(this.gasItem.clickMessage);
-            
-            // Phát âm thanh nhặt item
-            if (this.game.audioManager) {
-                this.game.audioManager.playItemSound();
-            }
-            
-            // Ẩn modal
-            this.hideModal();
-            
-            // // Ẩn hint bếp gas trên map
-            // this.hide();
+        } else if (this.currentStep === 3) {
+            this.game.messageManager.showMessage("Hãy kéo bình gas vào bếp!");
+        } else if (this.currentStep === 2) {
+            this.currentStep = 1;
+            this.updateHintImage();
+        }
+    }
+
+    onGasTankDropped() {
+        this.currentStep = 2;
+        this.updateHintImage();
+        this.gasInstalled = true;
+        
+        this.game.messageManager.showMessage("Bình ga đã được lắp vào bếp!");
+        
+        if (this.game.audioManager) {
+            this.game.audioManager.playItemSound();
         }
     }
 
     updateHintImage() {
         this.hintImage.src = `assets/images/items/gas_hint${this.currentStep}.png`;
+    }
+
+    setupDragAndDrop() {
+        this.hintContainer.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            if (this.currentStep === 3 && !this.gasInstalled) {
+                this.hintContainer.style.border = '2px dashed yellow';
+            }
+        });
+
+        this.hintContainer.addEventListener('dragleave', () => {
+            this.hintContainer.style.border = 'none';
+        });
+
+        this.hintContainer.addEventListener('drop', (e) => {
+            e.preventDefault();
+            this.hintContainer.style.border = 'none';
+
+            const itemId = e.dataTransfer.getData('text/plain');
+            
+            if (itemId === 'gas_tank' && this.currentStep === 3 && !this.gasInstalled) {
+                this.onGasTankDropped();
+                if (this.game.inventory) {
+                    this.game.inventory.removeItem('gas_tank');
+                }
+            } else {
+                this.game.messageManager.showMessage("Đây không phải là vật phẩm bạn cần hoặc không thể sử dụng ở đây.");
+            }
+        });
     }
 } 

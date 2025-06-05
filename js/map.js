@@ -40,15 +40,16 @@ export default class Map {
                 "Chúc bạn chơi game vui vẻ!"
             ],
             items: [
+                
                 {
-                    id: 'sword1',
-                    name: 'Thanh kiếm huyền thoại',
-                    x: 1500,
-                    y: 1400,
-                    width: 120,
-                    height: 150,
-                    image: 'assets/images/items/sword.png',
-                    clickMessage: 'Thanh kiếm huyền thoại! Người ta đồn rằng nó từng thuộc về một anh hùng vĩ đại.'
+                    id: 'gas_tank',
+                    name: 'Bình ga',
+                    x: 3050,
+                    y: 1700,
+                    width: 100,
+                    height: 250,
+                    image: 'assets/images/items/gas_item.png',
+                    clickMessage: 'Một bình ga cũ. Có lẽ nó vẫn còn dùng được.'
                 }
             ],
             hints: [

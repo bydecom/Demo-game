@@ -31,7 +31,7 @@ export default class Inventory {
         this.displayHeight = this.slotImageHeight * this.scale;
         
         // Kích thước của từng item trong slot
-        this.itemSize = 65; // Kích thước cố định cho items
+        this.itemSize = 60; 
         this.itemOffset = 5; // Khoảng cách từ mép slot đến item
         
         // Tạo UI inventory
@@ -52,7 +52,7 @@ export default class Inventory {
         this.inventoryElement.style.backgroundImage = "url('assets/images/items/slot.png')";
         this.inventoryElement.style.backgroundSize = 'contain';
         this.inventoryElement.style.backgroundRepeat = 'no-repeat';
-        this.inventoryElement.style.zIndex = '10';
+        this.inventoryElement.style.zIndex = '1001';
         
         // Tạo containers cho từng slot
         this.slotPositions.forEach((pos, index) => {
@@ -80,7 +80,7 @@ export default class Inventory {
         toggleButton.style.height = '150px';
         toggleButton.style.border = 'none';
         toggleButton.style.borderRadius = '5px';
-        toggleButton.style.zIndex = '9';
+        toggleButton.style.zIndex = '1001';
         
         // Tạo hình ảnh cho nút
         const baloImage = document.createElement('img');
@@ -103,13 +103,6 @@ export default class Inventory {
         // Thêm stopPropagation cho inventory element
         this.inventoryElement.addEventListener('click', (e) => {
             e.stopPropagation();
-        });
-
-        // Thêm sự kiện click bên ngoài để đóng inventory
-        document.addEventListener('click', () => {
-            if (this.isOpen) {
-                this.closeInventory();
-            }
         });
     }
 
@@ -150,12 +143,29 @@ export default class Inventory {
             emptySlot.style.backgroundImage = `url('${item.image}')`;
             emptySlot.title = item.name;
             
+            // Làm cho slot có thể kéo được
+            emptySlot.setAttribute('draggable', true);
+            // Lưu ID của item vào thuộc tính dataset để dễ dàng lấy ra khi kéo
+            emptySlot.dataset.itemId = item.id; 
+
+            // Sự kiện khi bắt đầu kéo
+            emptySlot.addEventListener('dragstart', (e) => {
+                e.dataTransfer.setData('text/plain', item.id); // Truyền ID của item
+                e.dataTransfer.effectAllowed = 'move'; // Cho phép di chuyển item
+                emptySlot.style.opacity = '0.5'; // Giảm độ mờ khi kéo
+            });
+
+            // Sự kiện khi kết thúc kéo
+            emptySlot.addEventListener('dragend', () => {
+                emptySlot.style.opacity = '1'; // Khôi phục độ mờ
+            });
+
             // Thêm hover effect
             emptySlot.addEventListener('mouseover', () => {
                 this.game.messageManager.showMessage(`${item.name}: Đã thu thập`);
             });
 
-            // Thêm click event cho item
+            // Thêm click event cho item (nếu có)
             if (item.onClick) {
                 emptySlot.addEventListener('click', (e) => {
                     e.stopPropagation(); // Ngăn sự kiện click lan ra ngoài
@@ -182,10 +192,25 @@ export default class Inventory {
             this.items.splice(index, 1);
             this.collectedItems.delete(itemId);
             
-            // Cập nhật UI
+            // Cập nhật UI - tìm slot chứa item đã xóa
             const slots = this.inventoryElement.querySelectorAll('.inventory-item');
-            slots[index].style.backgroundImage = 'none';
-            slots[index].title = '';
+            let targetSlot = null;
+            // Tìm slot dựa trên dataset.itemId
+            for (let i = 0; i < slots.length; i++) {
+                if (slots[i].dataset.itemId === itemId) {
+                    targetSlot = slots[i];
+                    break;
+                }
+            }
+
+            if (targetSlot) {
+                targetSlot.style.backgroundImage = 'none'; // Xóa hình ảnh
+                targetSlot.title = ''; // Xóa tooltip
+                targetSlot.removeAttribute('draggable'); // Loại bỏ khả năng kéo
+                delete targetSlot.dataset.itemId; // Xóa dữ liệu item id
+                
+                // (Tùy chọn) Xóa bỏ các event listener nếu được thêm riêng lẻ cho slot này
+            }
         }
     }
     

@@ -49,6 +49,13 @@ class ResourcePreloader {
                 'assets/images/items/mi.png',
                 // Inventory & UI
                 'assets/images/items/slot.png',
+                // Setting UI buttons
+                'assets/images/setting/Setting1.png',
+                'assets/images/setting/Setting2.png',
+                'assets/images/setting/Setting3.png',
+                'assets/images/setting/background.png',
+                // Credit screen
+                'assets/images/menu/credit.png',
                 // Diary pages (1-6)
                 'assets/images/items/nhatky/1.png',
                 'assets/images/items/nhatky/2.png',

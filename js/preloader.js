@@ -7,8 +7,21 @@ class ResourcePreloader {
                 'assets/images/background.jpg',
                 'assets/images/menu/menu.png',
                 'assets/images/menu/loading.png',
-                'assets/images/menu/credit.png',
+                'assets/images/items/balo.png',
+                'assets/images/items/noi/1.png',
+                'assets/images/items/mi.png',
+                'assets/images/items/gas.png',
+                'assets/images/items/noi/1.png',
+                'assets/images/items/mi.png',
+                'assets/images/items/gas.png',
                 'assets/images/button/back.png',
+                'assets/images/button/exit.png',
+                'assets/images/button/next.png',
+                'assets/images/button/prev.png',
+                'assets/images/button/play.png',
+                'assets/images/button/pause.png',
+                'assets/images/button/restart.png',
+                'assets/images/button/mute.png',
                 'assets/canh7.png',
                 'assets/images/move/01.png',
                 'assets/images/move/02.png',
@@ -33,7 +46,21 @@ class ResourcePreloader {
                 'assets/images/move2/10.png',
                 // Hint nồi
                 'assets/images/items/noi/1.png',
-                'assets/images/items/mi.png'
+                'assets/images/items/mi.png',
+                // Inventory & UI
+                'assets/images/items/slot.png',
+                // Diary pages (1-6)
+                'assets/images/items/nhatky/1.png',
+                'assets/images/items/nhatky/2.png',
+                'assets/images/items/nhatky/3.png',
+                'assets/images/items/nhatky/4.png',
+                'assets/images/items/nhatky/5.png',
+                'assets/images/items/nhatky/6.png',
+                // Gas hint steps (1-4)
+                'assets/images/items/gas_hint1.png',
+                'assets/images/items/gas_hint2.png',
+                'assets/images/items/gas_hint3.png',
+                'assets/images/items/gas_hint4.png'
             ],
             audio: [
                 'assets/audio/background-music.mp3',

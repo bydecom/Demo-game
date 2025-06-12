@@ -146,7 +146,7 @@ export default class Item {
         desc.textContent = this.modalDescription;
         Object.assign(desc.style, {
             position: 'absolute',
-            bottom: '10%',
+            bottom: '3%',
             left: '50%',
             transform: 'translateX(-50%)',
             color: 'white',

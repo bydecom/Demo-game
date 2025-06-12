@@ -8,10 +8,50 @@ export default class Menu {
         this.loadingScreen = new LoadingScreen();
         this.menuElement = null;
         this.currentLanguageIndex = 0; // 0: TIẾNG VIỆT, 1: TIẾNG ANH
-        this.languages = ['TIẾNG VIỆT', 'TIẾNG ANH'];
+        this.languages = ['TIẾNG VIỆT', 'ENGLISH'];
         this.currentGuideIndex = 0; // 0: CÓ, 1: KHÔNG
         this.guides = ['CÓ', 'KHÔNG'];
+        
+        // Thêm hệ thống translations
+        this.translations = {
+            0: { // TIẾNG VIỆT
+                newGame: 'Game Mới',
+                continue: 'Tiếp Tục',
+                setting: 'Cài Đặt',
+                credit: 'Đội ngũ',
+                quit: 'Thoát',
+                language: 'NGÔN NGỮ',
+                guide: 'HƯỚNG DẪN',
+                sound: 'ÂM THANH',
+                soundEffects: 'HIỆU ỨNG ÂM THANH',
+                sensitivity: 'ĐỘ NHẠY',
+                guides: ['CÓ', 'KHÔNG']
+            },
+            1: { // TIẾNG ANH
+                newGame: 'New Game',
+                continue: 'Continue',
+                setting: 'Setting',
+                credit: 'Credit',
+                quit: 'Quit',
+                language: 'LANGUAGE',
+                guide: 'GUIDE',
+                sound: 'SOUND',
+                soundEffects: 'SOUND EFFECTS',
+                sensitivity: 'SENSITIVITY', 
+                guides: ['YES', 'NO']
+            }
+        };
+        
+        // Lưu references tới các button elements
+        this.menuButtons = {};
+        
+        // Trạng thái khởi tạo game chỉ lưu trong RAM, không dùng localStorage nữa
+        this.hasStartedGame = false;
+
+        this.continueButton = null; // reference tới nút Continue
+
         this.createMenu();
+        this.updateContinueButtonState();
     }
 
     createMenu() {
@@ -19,31 +59,35 @@ export default class Menu {
         this.menuElement = document.createElement('div');
         this.menuElement.className = 'game-menu';
 
-        // Tạo tiêu đề
-
-
         // Tạo container cho các nút
         const buttonsContainer = document.createElement('div');
         buttonsContainer.className = 'game-menu-buttons';
 
         // Tạo các nút menu theo thứ tự
-        const menuButtons = [
-            { text: 'New Game', onClick: () => this.startGame() },
-            { text: 'Continue', onClick: () => this.continueGame() },
-            { text: 'Setting', onClick: () => this.openSettings() },
-            { text: 'Credit', onClick: () => this.openCredits() },
-            { text: 'Quit', onClick: () => this.quitGame() }
+        const menuButtonsConfig = [
+            { key: 'newGame', onClick: () => this.startGame() },
+            { key: 'continue', onClick: () => this.continueGame() },
+            { key: 'setting', onClick: () => this.openSettings() },
+            { key: 'credit', onClick: () => this.openCredits() },
+            { key: 'quit', onClick: () => this.quitGame() }
         ];
 
-        menuButtons.forEach(button => {
+        menuButtonsConfig.forEach(button => {
             const buttonElement = document.createElement('button');
             buttonElement.className = 'game-menu-button';
-            buttonElement.textContent = button.text;
+            buttonElement.textContent = this.translations[this.currentLanguageIndex][button.key];
             buttonElement.addEventListener('click', button.onClick);
+
+            // Lưu reference cho các nút
+            this.menuButtons[button.key] = buttonElement;
+            
+            // Lưu reference đặc biệt cho nút Continue
+            if (button.key === 'continue') {
+                this.continueButton = buttonElement;
+            }
+
             buttonsContainer.appendChild(buttonElement);
         });
-
-
 
         // Thêm container nút vào menu
         this.menuElement.appendChild(buttonsContainer);
@@ -53,6 +97,13 @@ export default class Menu {
 
         // Ẩn game container ban đầu
         this.game.gameContainer.style.display = 'none';
+    }
+
+    // Method mới để cập nhật ngôn ngữ của menu buttons
+    updateMenuLanguage() {
+        Object.keys(this.menuButtons).forEach(key => {
+            this.menuButtons[key].textContent = this.translations[this.currentLanguageIndex][key];
+        });
     }
 
     startGame() {
@@ -95,6 +146,9 @@ export default class Menu {
                     this.loadingScreen.hide();
                 }
                 clearInterval(progressTimer);
+                // Đánh dấu đã bắt đầu game để enable Continue lần sau
+                this.hasStartedGame = true;
+                this.updateContinueButtonState();
                 this._proceedStartGame();
             }, remaining);
         });
@@ -110,28 +164,28 @@ export default class Menu {
         setTimeout(() => {
             // Ẩn menu
             this.menuElement.style.display = 'none';
-
+            
             // Hiển thị game container nhưng vẫn ẩn
             this.game.gameContainer.style.display = 'block';
             this.game.gameContainer.style.opacity = '0';
-
+            
             // Bật lại event listeners cho game
             this.game.enableGameEvents();
-
+            
             // Đảm bảo camera đã được cập nhật trước khi hiển thị
             this.game.updateCamera();
-
+            
             // Thêm transition cho game container
             this.game.gameContainer.style.transition = 'opacity 0.5s ease';
-
+            
             // Hiển thị game container với animation fade in
             requestAnimationFrame(() => {
                 this.game.gameContainer.style.opacity = '1';
             });
-
+            
             // Bắt đầu game
             this.game.start();
-
+            
             // Hiển thị nút back
             const backButton = document.querySelector('.game-back-button');
             if (backButton) {
@@ -164,7 +218,12 @@ export default class Menu {
     }
 
     continueGame() {
-        // Thêm hiệu ứng fade out cho menu
+        // Nếu người chơi CHƯA từng bấm New Game -> thoát luôn
+        if (!this.hasStartedGame) {
+            return;
+        }
+
+        // Thêm hiệu ứng fade-out cho menu
         this.menuElement.style.opacity = '0';
         this.menuElement.style.transition = 'opacity 1s ease';
 
@@ -191,11 +250,11 @@ export default class Menu {
         // Tạo màn hình settings nếu chưa tồn tại
         if (!this.settingsScreen) {
             this.settingsScreen = document.createElement('div');
-            this.settingsScreen.className = 'settings-screen'; // Class mới cho CSS
+            this.settingsScreen.className = 'settings-screen';
             
             // Tạo nút đóng
             const closeButton = document.createElement('button');
-            closeButton.className = 'credit-close'; // Sử dụng lại class credit-close cho style nút back
+            closeButton.className = 'credit-close';
             closeButton.addEventListener('click', () => {
                 this.settingsScreen.classList.remove('show');
             });
@@ -219,22 +278,30 @@ export default class Menu {
         const settingsContent = document.createElement('div');
         settingsContent.className = 'settings-content';
 
-        // 1. Ngôn ngữ
-        settingsContent.appendChild(this.createOption('NGÔN NGỮ', this.languages[this.currentLanguageIndex], (direction) => this.toggleOption('language', direction)));
+        // 1. Ngôn ngữ - sử dụng translation
+        settingsContent.appendChild(this.createOption(
+            this.translations[this.currentLanguageIndex].language, 
+            this.languages[this.currentLanguageIndex], 
+            (direction) => this.toggleOption('language', direction)
+        ));
 
-        // 2. Hướng dẫn
-        settingsContent.appendChild(this.createOption('HƯỚNG DẪN', this.guides[this.currentGuideIndex], (direction) => this.toggleOption('guide', direction)));
+        // 2. Hướng dẫn - sử dụng translation
+        settingsContent.appendChild(this.createOption(
+            this.translations[this.currentLanguageIndex].guide, 
+            this.translations[this.currentLanguageIndex].guides[this.currentGuideIndex], 
+            (direction) => this.toggleOption('guide', direction)
+        ));
 
-        // 3. Âm thanh (Slider)
-        const soundOption = this.createSliderOption('ÂM THANH', 'sound');
-        soundOption.classList.add('settings-option-sound-spacing'); // Thêm class mới
+        // 3. Âm thanh (Slider) - sử dụng translation
+        const soundOption = this.createSliderOption(this.translations[this.currentLanguageIndex].sound, 'sound');
+        soundOption.classList.add('settings-option-sound-spacing');
         settingsContent.appendChild(soundOption);
 
-        // 4. Hiệu ứng âm thanh (Slider)
-        settingsContent.appendChild(this.createSliderOption('HIỆU ỨNG ÂM THANH', 'sound-effects'));
+        // 4. Hiệu ứng âm thanh (Slider) - sử dụng translation
+        settingsContent.appendChild(this.createSliderOption(this.translations[this.currentLanguageIndex].soundEffects, 'sound-effects'));
 
-        // 5. Độ nhạy (Slider)
-        settingsContent.appendChild(this.createSliderOption('ĐỘ NHẠY', 'sensitivity'));
+        // 5. Độ nhạy (Slider) - sử dụng translation
+        settingsContent.appendChild(this.createSliderOption(this.translations[this.currentLanguageIndex].sensitivity, 'sensitivity'));
 
         this.settingsScreen.appendChild(settingsContent);
         
@@ -280,7 +347,7 @@ export default class Menu {
         return optionDiv;
     }
 
-    // New method to handle toggling options
+    // Updated toggleOption method để cập nhật UI khi đổi ngôn ngữ
     toggleOption(optionType, direction) {
         let currentIndex;
         let optionsArray;
@@ -292,7 +359,7 @@ export default class Menu {
             valueSpan = this.settingsScreen.querySelector('.settings-option:nth-child(1) .settings-value');
         } else if (optionType === 'guide') {
             currentIndex = this.currentGuideIndex;
-            optionsArray = this.guides;
+            optionsArray = this.translations[this.currentLanguageIndex].guides;
             valueSpan = this.settingsScreen.querySelector('.settings-option:nth-child(2) .settings-value');
         }
 
@@ -304,16 +371,24 @@ export default class Menu {
             currentIndex = (currentIndex - 1 + optionsArray.length) % optionsArray.length;
         }
 
-        // Update the displayed value
+        // Cập nhật giá trị hiển thị
         valueSpan.textContent = optionsArray[currentIndex];
 
-        // Update the internal state
+        // Lưu trạng thái mới
         if (optionType === 'language') {
             this.currentLanguageIndex = currentIndex;
             console.log(`Language set to: ${this.languages[this.currentLanguageIndex]}`);
+
+            // Cập nhật lại ngôn ngữ menu + refresh Settings
+            this.updateMenuLanguage();
+            setTimeout(() => {
+                this.settingsScreen.classList.remove('show');
+                setTimeout(() => this.openSettings(), 100);
+            }, 100);
+
         } else if (optionType === 'guide') {
             this.currentGuideIndex = currentIndex;
-            console.log(`Guide set to: ${this.guides[this.currentGuideIndex]}`);
+            console.log(`Guide set to: ${this.translations[this.currentLanguageIndex].guides[this.currentGuideIndex]}`);
         }
     }
 
@@ -421,5 +496,20 @@ export default class Menu {
     quitGame() {
         console.log('Quitting game...');
         // Implement quit game logic
+    }
+
+    // Cập nhật trạng thái enable/disable nút Continue
+    updateContinueButtonState() {
+        if (!this.continueButton) return;
+
+        if (this.hasStartedGame) {
+            this.continueButton.disabled = false;
+            this.continueButton.style.opacity = '1';
+            this.continueButton.style.pointerEvents = 'auto';
+        } else {
+            this.continueButton.disabled = true;
+            this.continueButton.style.opacity = '0.5';
+            this.continueButton.style.pointerEvents = 'none';
+        }
     }
 } 

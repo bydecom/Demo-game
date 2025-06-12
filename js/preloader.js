@@ -70,6 +70,15 @@ class ResourcePreloader {
                 // Thùng đá
                 'assets/images/items/thungda/1.png',
                 'assets/images/items/thungda/binham.png',
+                'assets/images/items/thungda/thungda_hint1.png',
+                'assets/images/items/thungda/thungda_hint2.png',
+                'assets/images/items/thungda/thungda_hint3.png',
+                'assets/images/items/thungda/canuoc_item.png',
+                //npc
+                'assets/images/npc/1.png',
+                'assets/images/npc/2.png',
+                'assets/images/npc/3.png',
+                'assets/images/npc/4.png'
             ],
             audio: [
                 'assets/audio/background-music.mp3',

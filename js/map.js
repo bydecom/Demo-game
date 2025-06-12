@@ -2,6 +2,7 @@ import Computer from './hints/computer.js';
 import Gas from './hints/gas.js';
 import Noi from './hints/noi.js';
 import Item from './item.js';
+import NPC from './hints/npc.js';
 
 export default class Map {
     constructor(id, game) {
@@ -108,6 +109,22 @@ export default class Map {
                     width: 830,
                     height: 678,
                     image: 'assets/images/items/thungda/1.png'
+                },
+                {
+                    id: 'chutiem',
+                    type: 'NPC',
+                    name: 'Chủ Tiệm',
+                    x: 6500,
+                    y: 850,
+                    width: 580,
+                    height: 1162,
+                    frames: [
+                        'assets/images/npc/1.png',
+                        'assets/images/npc/2.png',
+                        'assets/images/npc/3.png',
+                        'assets/images/npc/4.png'
+                    ],
+                    frameInterval: 300
                 }
             ]
         };
@@ -168,7 +185,15 @@ export default class Map {
                         });
                         break;
                     case 'Noi':
+                    case 'noi':
                         hint = new Noi({
+                            ...hintData,
+                            game: this.game
+                        });
+                        break;
+                    case 'NPC':
+                    case 'npc':
+                        hint = new NPC({
                             ...hintData,
                             game: this.game
                         });

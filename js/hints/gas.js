@@ -74,7 +74,7 @@ export default class Gas extends Hint {
         this.messageLabel.style.textAlign = 'center';
         Object.assign(this.messageLabel.style, {
             position: 'absolute',
-            bottom: '10%',
+            bottom: '3%',
             left: '50%',
             transform: 'translateX(-50%)',
             width: '80%'
@@ -83,8 +83,9 @@ export default class Gas extends Hint {
         this.closeButton = document.createElement('button');
         this.closeButton.className = 'hint-close-button';
         this.closeButton.style.position = 'absolute';
-        this.closeButton.style.right = '10px';
-        this.closeButton.style.top = '10px';
+        this.closeButton.style.top = '60px';
+        this.closeButton.style.left = '80%';
+        this.closeButton.style.transform = 'translateX(-50%)';
         this.closeButton.style.width = '70px';
         this.closeButton.style.height = '70px';
         this.closeButton.style.backgroundImage = "url('assets/images/button/exit.png')";

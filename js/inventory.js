@@ -141,6 +141,10 @@ export default class Inventory {
         if (emptySlot) {
             // Thêm item vào slot
             emptySlot.style.backgroundImage = `url('${item.image}')`;
+            // Nếu item có chỉ định kích thước background riêng cho inventory thì ghi đè
+            if (item.backgroundSize) {
+                emptySlot.style.backgroundSize = item.backgroundSize;
+            }
             emptySlot.title = item.name;
             
             // Làm cho slot có thể kéo được

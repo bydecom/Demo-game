@@ -8,6 +8,7 @@ export default class Item {
         this.height = config.height || 100;
         this.image = config.image;
         this.clickMessage = config.clickMessage || `Bạn đã nhặt ${this.name}`;
+        this.description = config.description || this.clickMessage;
         this.isCollected = false;
         this.game = config.game;
         
@@ -25,10 +26,41 @@ export default class Item {
         
         // Thêm sự kiện click
         this.element.addEventListener('click', (e) => {
-            // Ngăn chặn sự kiện click tiếp tục lan truyền đến game container
             e.stopPropagation();
-            this.collect();
+
+            // Tính vị trí trung tâm item
+            const targetX = this.x + this.width / 2;
+            const distance = Math.abs(this.game.player.x - targetX);
+            const THRESHOLD = 180; // Khoảng cách đủ gần để nhặt
+
+            const openInteraction = () => {
+                // Hiển thị modal phóng to
+                this.showPreviewModal();
+            };
+
+            if (distance > THRESHOLD) {
+                // Di chuyển nhân vật tới item trước
+                this.game.player.moveToPosition(targetX);
+
+                // Chờ nhân vật tới nơi rồi mới mở modal
+                const waitId = setInterval(() => {
+                    if (!this.game.player.isMoving) {
+                        clearInterval(waitId);
+                        openInteraction();
+                    }
+                }, 100);
+            } else {
+                openInteraction();
+            }
         });
+
+        // Modal state
+        this.modalCreated = false;
+
+        // Cấu hình cho modal phóng to
+        this.modalWidth = config.modalWidth; // số px
+        this.modalHeight = config.modalHeight;
+        this.modalDescription = config.modalDescription || this.name;
     }
     
     collect() {
@@ -66,5 +98,73 @@ export default class Item {
             this.element.classList.remove('item-collected');
             this.game.gameContainer.appendChild(this.element);
         }
+    }
+
+    // Tạo và hiển thị modal xem trước item
+    showPreviewModal() {
+        if (!this.modalCreated) {
+            this.createPreviewModal();
+        }
+        this.overlay.style.display = 'flex';
+    }
+
+    createPreviewModal() {
+        // Overlay
+        this.overlay = document.createElement('div');
+        Object.assign(this.overlay.style, {
+            position: 'fixed',
+            top: '0',
+            left: '0',
+            width: '100%',
+            height: '100%',
+            backgroundColor: 'rgba(0,0,0,0.7)',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: '1000'
+        });
+
+        const container = document.createElement('div');
+        container.style.position = 'relative';
+        container.style.display = 'flex';
+        container.style.flexDirection = 'column';
+        container.style.alignItems = 'center';
+
+        // Áp dụng kích thước modal nếu được cấu hình
+        if (this.modalWidth) container.style.width = this.modalWidth + 'px';
+        if (this.modalHeight) container.style.height = this.modalHeight + 'px';
+
+        const img = document.createElement('img');
+        img.src = this.image;
+        img.style.maxWidth = '90%';
+        img.style.maxHeight = '90%';
+        img.style.objectFit = 'contain';
+        container.appendChild(img);
+
+        // Description text cố định dưới màn
+        const desc = document.createElement('div');
+        desc.textContent = this.modalDescription;
+        Object.assign(desc.style, {
+            position: 'absolute',
+            bottom: '10%',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            color: 'white',
+            fontSize: '24px',
+            textAlign: 'center',
+            width: '80%'
+        });
+        this.overlay.appendChild(desc);
+
+        // Click on container to collect
+        container.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.overlay.style.display = 'none';
+            this.collect();
+        });
+
+        this.overlay.appendChild(container);
+        document.body.appendChild(this.overlay);
+        this.modalCreated = true;
     }
 } 

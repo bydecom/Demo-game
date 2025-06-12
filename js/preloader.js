@@ -9,17 +9,31 @@ class ResourcePreloader {
                 'assets/images/menu/loading.png',
                 'assets/images/menu/credit.png',
                 'assets/images/button/back.png',
-                // Frame animation của nhân vật
-                'assets/images/move/1.png',
-                'assets/images/move/2.png',
-                'assets/images/move/3.png',
-                'assets/images/move/4.png',
-                'assets/images/move/5.png',
-                'assets/images/move/6.png',
-                'assets/images/move/7.png',
-                'assets/images/move/8.png',
-                'assets/images/move/9.png',
-                'assets/images/move/10.png'
+                'assets/canh7.png',
+                'assets/images/move/01.png',
+                'assets/images/move/02.png',
+                'assets/images/move/03.png',
+                'assets/images/move/04.png',
+                'assets/images/move/05.png',
+                'assets/images/move/06.png',
+                'assets/images/move/07.png',
+                'assets/images/move/08.png',
+                'assets/images/move/09.png',
+                'assets/images/move/10.png',
+                'assets/images/move/11.png',
+                'assets/images/move/12.png',
+                'assets/images/move/13.png',
+                'assets/images/move/14.png',
+                'assets/images/move/15.png',
+                'assets/images/move/16.png',
+                'assets/images/move/17.png',
+                'assets/images/move/18.png',
+                'assets/images/move/19.png',
+                'assets/images/move/00.png',
+                'assets/images/move2/10.png',
+                // Hint nồi
+                'assets/images/items/noi/1.png',
+                'assets/images/items/mi.png'
             ],
             audio: [
                 'assets/audio/background-music.mp3',
@@ -33,6 +47,13 @@ class ResourcePreloader {
             audio: new Map()
         };
 
+        // Tính tổng số tài nguyên cần preload
+        this.totalCount = this.resources.images.length + this.resources.audio.length;
+        this.loadedCount = 0;
+        this.progressCallbacks = [];
+
+        // Khởi tạo promise hoàn tất
+        this._createLoadedPromise();
         // Bắt đầu preload ngay khi khởi tạo
         this.startPreloading();
     }
@@ -45,11 +66,17 @@ class ResourcePreloader {
                 img.onload = () => {
                     this.cache.images.set(src, img);
                     console.log(`Đã tải xong hình ảnh: ${src}`);
+                    this._onResourceLoaded();
                 };
                 img.onerror = () => {
                     console.error(`Lỗi khi tải hình ảnh: ${src}`);
+                    // Dù lỗi vẫn tính là đã xử lý để không kẹt progress
+                    this._onResourceLoaded();
                 };
                 img.src = src;
+            } else {
+                // Nếu đã trong cache, coi như đã load
+                this._onResourceLoaded();
             }
         });
 
@@ -60,16 +87,19 @@ class ResourcePreloader {
                 audio.oncanplaythrough = () => {
                     this.cache.audio.set(src, audio);
                     console.log(`Đã tải xong âm thanh: ${src}`);
+                    this._onResourceLoaded();
                 };
                 audio.onerror = () => {
                     console.error(`Lỗi khi tải âm thanh: ${src}`);
+                    // Vẫn tính để tránh treo
+                    this._onResourceLoaded();
                 };
-                // Tắt âm thanh khi preload
                 audio.volume = 0;
                 audio.muted = true;
                 audio.src = src;
-                // Bắt đầu load
                 audio.load();
+            } else {
+                this._onResourceLoaded();
             }
         });
     }
@@ -101,6 +131,41 @@ class ResourcePreloader {
         // Nếu chưa có trong cache, tải mới
         const audio = new Audio(src);
         return audio;
+    }
+
+    // Hàm gọi khi một tài nguyên (image/audio) đã được xử lý xong
+    _onResourceLoaded() {
+        this.loadedCount += 1;
+        const percent = (this.loadedCount / this.totalCount) * 100;
+        // Gửi event progress
+        this.progressCallbacks.forEach(cb => cb(percent));
+        if (this.loadedCount >= this.totalCount) {
+            this._resolveLoaded();
+        }
+    }
+
+    // Khởi tạo promise hoàn tất
+    _createLoadedPromise() {
+        this.loadedPromise = new Promise((resolve) => {
+            this._resolveLoaded = resolve;
+        });
+    }
+
+    // Trả về promise sẽ resolve khi tất cả tài nguyên đã load
+    getLoadedPromise() {
+        return this.loadedPromise;
+    }
+
+    // Thêm listener theo dõi quá trình load (nhận % progress)
+    addProgressListener(callback) {
+        if (typeof callback === 'function') {
+            this.progressCallbacks.push(callback);
+        }
+    }
+
+    // Kiểm tra đã load xong chưa
+    isLoaded() {
+        return this.loadedCount >= this.totalCount;
     }
 }
 

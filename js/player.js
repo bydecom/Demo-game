@@ -57,8 +57,16 @@ export default class Player {
         });
     }
     
+    // Reset nhân vật về vị trí (x,y). Nếu không cung cấp, dùng vị trí bắt đầu của map.
     resetPosition(x, y) {
-        // Reset vị trí
+        if (typeof x !== 'number') {
+            x = this.game.map.getPlayerStartX();
+        }
+        if (typeof y !== 'number') {
+            y = this.game.map.getPlayerStartY();
+        }
+
+        // Lưu lại toạ độ
         this.x = x;
         this.y = y;
         
@@ -182,6 +190,8 @@ export default class Player {
         this.isMoving = false;
         this.element.classList.remove('is-moving');
         this.game.updateMovingState(false);
+        // Dừng âm thanh bước chân ngay
+        this.game.audioManager.stopWalkLoop();
         
         if (this.animationTimeout) {
             clearTimeout(this.animationTimeout);
@@ -210,7 +220,7 @@ export default class Player {
     }
     
     startAnimation() {
-        this.game.audioManager.playWalkSound();
+        this.game.audioManager.startWalkLoop();
         // Xóa tất cả class trước khi thêm mới
         this.element.classList.remove('moving-left', 'moving-right', 'walking-left', 'walking-right');
         
@@ -245,9 +255,9 @@ export default class Player {
         
         // Giữ class direction và set ảnh tĩnh theo hướng cuối cùng
         if (this.lastDirection === 'right') {
-            this.element.style.backgroundImage = "url('assets/images/move2/1.png')";
+            this.element.style.backgroundImage = "url('assets/images/move/00.png')";
         } else {
-            this.element.style.backgroundImage = "url('assets/images/move2/1.png')";
+            this.element.style.backgroundImage = "url('assets/images/move/00.png')";
         }
     }
 
@@ -266,15 +276,5 @@ export default class Player {
         if (this.isMoving) {
             this.animationFrameId = requestAnimationFrame(() => this.trackPlayerMovement());
         }
-    }
-
-    resetPosition() {
-        // Reset vị trí player về điểm bắt đầu
-        this.element.style.left = '50%';
-        this.isMoving = false;
-        this.element.classList.remove('walking-left', 'walking-right', 'is-moving');
-        
-        // Reset animation và hướng nhìn
-        this.element.style.backgroundImage = "url('assets/images/move2/1.png')";
     }
 } 

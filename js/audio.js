@@ -8,6 +8,7 @@ export default class AudioManager {
         
         this.walkSound = new Audio('assets/audio/footstep.mp3');
         this.walkSound.volume = 0.3;
+        this.walkSound.loop = true;
         
         this.itemSound = document.createElement('audio');
         this.itemSound.src = 'assets/audio/item-pickup.mp3';
@@ -65,8 +66,7 @@ export default class AudioManager {
     }
     
     playWalkSound() {
-        this.walkSound.currentTime = 0;
-        this.walkSound.play();
+        this.startWalkLoop();
     }
     
     playItemSound() {
@@ -87,6 +87,22 @@ export default class AudioManager {
         // Đảm bảo nhạc nền đang phát
         if (!this.isMuted) {
             this.bgMusic.play();
+        }
+    }
+    
+    // Bắt đầu phát loop bước chân (chỉ gọi nếu chưa phát)
+    startWalkLoop() {
+        if (this.walkSound.paused && !this.isMuted) {
+            this.walkSound.currentTime = 0;
+            this.walkSound.play();
+        }
+    }
+    
+    // Dừng loop bước chân ngay lập tức
+    stopWalkLoop() {
+        if (!this.walkSound.paused) {
+            this.walkSound.pause();
+            this.walkSound.currentTime = 0;
         }
     }
 } 

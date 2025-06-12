@@ -1,5 +1,6 @@
 import Computer from './hints/computer.js';
 import Gas from './hints/gas.js';
+import Noi from './hints/noi.js';
 import Item from './item.js';
 
 export default class Map {
@@ -27,7 +28,7 @@ export default class Map {
             height: 2160,
             backgroundImage: 'assets/canh7.png',
             playerStartX: 7680/2,
-            playerStartY: 2160 / 2 + 300,
+            playerStartY: 2160 / 2 + 350,
             boundaries: {
                 left: 0,
                 right: 7680
@@ -40,7 +41,6 @@ export default class Map {
                 "Chúc bạn chơi game vui vẻ!"
             ],
             items: [
-                
                 {
                     id: 'gas_tank',
                     name: 'Bình ga',
@@ -49,29 +49,55 @@ export default class Map {
                     width: 100,
                     height: 250,
                     image: 'assets/images/items/gas_item.png',
-                    clickMessage: 'Một bình ga cũ. Có lẽ nó vẫn còn dùng được.'
+                    clickMessage: 'Bạn đã nhặt được một bình ga.',
+                    modalWidth: 600,
+                    modalHeight: 400,
+                    modalDescription: 'Một bình ga cũ. Có lẽ nó vẫn còn dùng được.'
+                },
+                {
+                    id: 'noodle_pack',
+                    name: 'Gói mì',
+                    x: 4080,
+                    y: 950,
+                    width: 120,
+                    height: 120,
+                    image: 'assets/images/items/mi.png',
+                    clickMessage: 'Bạn đã nhặt được một gói mì.',
+                    modalWidth: 600,
+                    modalHeight: 400,
+                    modalDescription: 'Một gói mì tôm thơm ngon.'
                 }
             ],
             hints: [
-                {
-                    id: 'computer',
-                    type: 'Computer',
-                    name: 'Máy tính bí ẩn',
-                    x: 5450,
-                    y: 650,
-                    width: 1402,
-                    height: 1362,
-                    image: 'assets/images/items/computer.png'
-                },
+                // {
+                //     id: 'computer',
+                //     type: 'Computer',
+                //     name: 'Máy tính bí ẩn',
+                //     x: 5450,
+                //     y: 650,
+                //     width: 1402,
+                //     height: 1362,
+                //     image: 'assets/images/items/computer.png'
+                // },
                 {
                     id: 'gas',
                     type: 'Gas',
-                    name: 'Bếp gas cũ',
-                    x: 5130,
-                    y: 920,
-                    width: 353,
-                    height: 243,
-                    image: 'assets/images/items/ga_map.png'
+                    name: 'Bếp gas mini',
+                    x: 5195,
+                    y: 1020,
+                    width: 276,
+                    height: 148,
+                    image: 'assets/images/items/bep.png'
+                },
+                {
+                    id: 'noi',
+                    type: 'noi',
+                    name: 'Nồi nấu nước',
+                    x: 5142,
+                    y: 930,
+                    width: 276,
+                    height: 148,
+                    image: 'assets/images/items/noi_map.png'
                 }
             ]
         };
@@ -109,7 +135,7 @@ export default class Map {
         
         // Tạo các hints mới từ map data
         if (this.mapData.hints && this.mapData.hints.length > 0) {
-            this.mapData.hints.forEach(hintData => {
+            this.mapData.hints.forEach(async hintData => {
                 let hint;
                 switch(hintData.type) {
                     case 'Computer':
@@ -120,6 +146,13 @@ export default class Map {
                         break;
                     case 'Gas':
                         hint = new Gas({
+                            ...hintData,
+                            game: this.game
+                        });
+                        break;
+                    case 'Noi':
+                    case 'noi':
+                        hint = new Noi({
                             ...hintData,
                             game: this.game
                         });

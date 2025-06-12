@@ -26,13 +26,14 @@ body {
     background-position: left top;
     cursor: url('assets/images/chuot32x32.png'), auto;
     transition: none;
+    display: none; /* Ẩn mặc định, sẽ hiển thị khi start game */
 }
 
 #character {
     position: absolute;
-    width: 650px;
-    height: 1300px;
-    background-image: url('assets/images/move/1.png');
+    width: 750px;
+    height: 1400px;
+    background-image: url('assets/images/move/00.png');
     background-size: contain;
     background-repeat: no-repeat;
     background-position: center;
@@ -40,6 +41,7 @@ body {
     transition: left 0.8s cubic-bezier(0.22, 1, 0.36, 1);
     top: 50%;
     z-index: 5;
+    pointer-events: none; /* Cho phép click xuyên qua nhân vật */
 }
 
 #character.walking-left {
@@ -52,21 +54,51 @@ body {
 }
 
 @keyframes walkLeft {
-    0% { background-image: url('assets/images/move2/1.png'); }
-    16.6% { background-image: url('assets/images/move2/2.png'); }
-    33.2% { background-image: url('assets/images/move2/3.png'); }
-    49.8% { background-image: url('assets/images/move2/4.png'); }
-    66.4% { background-image: url('assets/images/move2/5.png'); }
-    83%, 100% { background-image: url('assets/images/move2/6.png'); }
+    0% { background-image: url('assets/images/move/00.png'); }
+    5% { background-image: url('assets/images/move/01.png'); }
+    10% { background-image: url('assets/images/move/02.png'); }
+    15% { background-image: url('assets/images/move/03.png'); }
+    20% { background-image: url('assets/images/move/04.png'); }
+    25% { background-image: url('assets/images/move/05.png'); }
+    30% { background-image: url('assets/images/move/06.png'); }
+    35% { background-image: url('assets/images/move/07.png'); }
+    40% { background-image: url('assets/images/move/08.png'); }
+    45% { background-image: url('assets/images/move/09.png'); }
+    50% { background-image: url('assets/images/move/10.png'); }
+    55% { background-image: url('assets/images/move/11.png'); }
+    60% { background-image: url('assets/images/move/12.png'); }
+    65% { background-image: url('assets/images/move/13.png'); }
+    70% { background-image: url('assets/images/move/14.png'); }
+    75% { background-image: url('assets/images/move/15.png'); }
+    80% { background-image: url('assets/images/move/16.png'); }
+    85% { background-image: url('assets/images/move/17.png'); }
+    90% { background-image: url('assets/images/move/18.png'); }
+    95% { background-image: url('assets/images/move/19.png'); }
+    100% { background-image: url('assets/images/move/00.png'); }
 }
 
 @keyframes walkRight {
-    0% { background-image: url('assets/images/move2/1.png'); }
-    16.6% { background-image: url('assets/images/move2/2.png'); }
-    33.2% { background-image: url('assets/images/move2/3.png'); }
-    49.8% { background-image: url('assets/images/move2/4.png'); }
-    66.4% { background-image: url('assets/images/move2/5.png'); }
-    83%, 100% { background-image: url('assets/images/move2/6.png'); }
+    0% { background-image: url('assets/images/move/00.png'); }
+    5% { background-image: url('assets/images/move/01.png'); }
+    10% { background-image: url('assets/images/move/02.png'); }
+    15% { background-image: url('assets/images/move/03.png'); }
+    20% { background-image: url('assets/images/move/04.png'); }
+    25% { background-image: url('assets/images/move/05.png'); }
+    30% { background-image: url('assets/images/move/06.png'); }
+    35% { background-image: url('assets/images/move/07.png'); }
+    40% { background-image: url('assets/images/move/08.png'); }
+    45% { background-image: url('assets/images/move/09.png'); }
+    50% { background-image: url('assets/images/move/10.png'); }
+    55% { background-image: url('assets/images/move/11.png'); }
+    60% { background-image: url('assets/images/move/12.png'); }
+    65% { background-image: url('assets/images/move/13.png'); }
+    70% { background-image: url('assets/images/move/14.png'); }
+    75% { background-image: url('assets/images/move/15.png'); }
+    80% { background-image: url('assets/images/move/16.png'); }
+    85% { background-image: url('assets/images/move/17.png'); }
+    90% { background-image: url('assets/images/move/18.png'); }
+    95% { background-image: url('assets/images/move/19.png'); }
+    100% { background-image: url('assets/images/move/00.png'); }
 }
 
 #character.moving-left {
@@ -380,7 +412,13 @@ body {
 }
 
 .loading-elements-container {
-    margin-bottom: 60px;
+    position: absolute;
+    left: 50%;
+    bottom: 60px;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .loading-text {
@@ -409,6 +447,9 @@ body {
 }
 
 .progress-fill {
+    position: absolute;
+    left: 0;
+    top: 0;
     width: 0%;
     height: 100%;
     background: #ffffff;

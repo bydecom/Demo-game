@@ -1,4 +1,4 @@
-class LoadingScreen {
+export default class LoadingScreen {
     constructor() {
         this.loadingTexts = [
             "Mẹo: Nhật ký có thể mang lại một vài gợi ý, kèm theo đó là sự thật xảy ra đằng sau.",
@@ -61,36 +61,16 @@ class LoadingScreen {
         this.tipElement.textContent = this.getRandomText();
         this.progress = 0;
         this.progressFill.style.width = '0%';
-        
-        // Ensure layout is computed before starting animation
-        requestAnimationFrame(() => {
-            this.startLoading();
-        });
     }
 
     hide() {
         this.element.style.display = 'none';
     }
 
-    startLoading() {
-        let progress = 0;
-        const duration = 3000; // Thời gian loading (3 giây)
-        const interval = 30; // Cập nhật mỗi 30ms
-        const steps = duration / interval;
-        const increment = 100 / steps;
-
-        const loadingInterval = setInterval(() => {
-            progress += increment;
-            if (progress >= 100) {
-                progress = 100;
-                clearInterval(loadingInterval);
-                setTimeout(() => {
-                    this.hide();
-                    this.onLoadingComplete(); // Callback khi loading hoàn tất
-                }, 500);
-            }
-            this.progressFill.style.width = `${progress}%`;
-        }, interval);
+    // Cập nhật tiến trình thực tế
+    setProgress(percent) {
+        const clamped = Math.max(0, Math.min(100, percent));
+        this.progressFill.style.width = `${clamped}%`;
     }
 
     // Callback khi loading hoàn tất

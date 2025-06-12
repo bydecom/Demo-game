@@ -1,3 +1,6 @@
+import LoadingScreen from './loading.js';
+import resourcePreloader from './preloader.js';
+
 export default class Menu {
     constructor(game) {
         this.game = game;
@@ -54,10 +57,51 @@ export default class Menu {
 
     startGame() {
         // Hiển thị loading screen
-        this.loadingScreen.onLoadingComplete = () => {
-            // Reset game state và thiết lập vị trí nhân vật trước
-            this.game.resetGameState();
-            
+        this.loadingScreen.show();
+
+        const startTime = Date.now();
+        const MIN_DURATION = 5000; // 5 giây
+        let loaderProgress = 0;    // % nhận từ preloader
+
+        // Timer để tăng tiến trình hiển thị mượt
+        const progressTimer = setInterval(() => {
+            const elapsed = Date.now() - startTime;
+            const simulated = Math.min(100, (elapsed / MIN_DURATION) * 100);
+            const percent = Math.max(simulated, loaderProgress);
+            if (this.loadingScreen) {
+                this.loadingScreen.setProgress(percent);
+            }
+            // Khi đã đạt 100% thì dừng timer
+            if (percent >= 100) {
+                clearInterval(progressTimer);
+            }
+        }, 30);
+
+        // Cập nhật tiến trình dựa trên preloader
+        resourcePreloader.addProgressListener((percent) => {
+            loaderProgress = percent;
+        });
+
+        // Khi preload hoàn tất
+        resourcePreloader.getLoadedPromise().then(() => {
+            const elapsed = Date.now() - startTime;
+            const remaining = Math.max(0, MIN_DURATION - elapsed);
+
+            // Sau khi kết thúc tối thiểu 5s, đảm bảo progress ở 100% và ẩn loading
+            setTimeout(() => {
+                // Đảm bảo đã fill đầy trước khi ẩn
+                if (this.loadingScreen) {
+                    this.loadingScreen.setProgress(100);
+                    this.loadingScreen.hide();
+                }
+                clearInterval(progressTimer);
+                this._proceedStartGame();
+            }, remaining);
+        });
+    }
+
+    // Hàm thực thi phần còn lại của startGame sau khi preload xong
+    _proceedStartGame() {
         // Thêm hiệu ứng fade out cho menu
         this.menuElement.style.opacity = '0';
         this.menuElement.style.transition = 'opacity 1s ease';
@@ -66,36 +110,34 @@ export default class Menu {
         setTimeout(() => {
             // Ẩn menu
             this.menuElement.style.display = 'none';
-            
-                // Hiển thị game container nhưng vẫn ẩn
+
+            // Hiển thị game container nhưng vẫn ẩn
             this.game.gameContainer.style.display = 'block';
-                this.game.gameContainer.style.opacity = '0';
-            
+            this.game.gameContainer.style.opacity = '0';
+
             // Bật lại event listeners cho game
             this.game.enableGameEvents();
-            
-                // Đảm bảo camera đã được cập nhật trước khi hiển thị
-                this.game.updateCamera();
-                
-                // Thêm transition cho game container
-                this.game.gameContainer.style.transition = 'opacity 0.5s ease';
-                
-                // Hiển thị game container với animation fade in
-                requestAnimationFrame(() => {
-                    this.game.gameContainer.style.opacity = '1';
-                });
-                
-                // Bắt đầu game
+
+            // Đảm bảo camera đã được cập nhật trước khi hiển thị
+            this.game.updateCamera();
+
+            // Thêm transition cho game container
+            this.game.gameContainer.style.transition = 'opacity 0.5s ease';
+
+            // Hiển thị game container với animation fade in
+            requestAnimationFrame(() => {
+                this.game.gameContainer.style.opacity = '1';
+            });
+
+            // Bắt đầu game
             this.game.start();
-            
+
             // Hiển thị nút back
             const backButton = document.querySelector('.game-back-button');
             if (backButton) {
                 backButton.style.display = 'block';
             }
         }, 1000);
-        };
-        this.loadingScreen.show();
     }
 
     resetGame() {

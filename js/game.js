@@ -244,7 +244,7 @@ export default class Game {
         // Reset player position với animation tắt
         if (this.player) {
             this.player.element.style.transition = 'none';
-            this.player.resetPosition();
+            this.player.resetPosition(this.map.getPlayerStartX(), this.map.getPlayerStartY());
             // Force a reflow để đảm bảo transition được reset
             this.player.element.offsetHeight;
             // Bật lại animation sau khi đã đặt vị trí

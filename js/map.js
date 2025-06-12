@@ -98,6 +98,16 @@ export default class Map {
                     width: 276,
                     height: 148,
                     image: 'assets/images/items/noi_map.png'
+                },
+                {
+                    id: 'thungda',
+                    type: 'ThungDa',
+                    name: 'Thùng đá',
+                    x: 3470,
+                    y: 1220,
+                    width: 830,
+                    height: 678,
+                    image: 'assets/images/items/thungda/1.png'
                 }
             ]
         };
@@ -150,8 +160,14 @@ export default class Map {
                             game: this.game
                         });
                         break;
+                    case 'ThungDa':
+                    case 'thungda':
+                        hint = new (await import('./hints/thungda.js')).default({
+                            ...hintData,
+                            game: this.game
+                        });
+                        break;
                     case 'Noi':
-                    case 'noi':
                         hint = new Noi({
                             ...hintData,
                             game: this.game

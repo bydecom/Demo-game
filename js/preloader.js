@@ -43,7 +43,6 @@ class ResourcePreloader {
                 'assets/images/move/18.png',
                 'assets/images/move/19.png',
                 'assets/images/move/00.png',
-                'assets/images/move2/10.png',
                 // Hint nồi
                 'assets/images/items/noi/1.png',
                 'assets/images/items/mi.png',
@@ -67,7 +66,10 @@ class ResourcePreloader {
                 'assets/images/items/gas_hint1.png',
                 'assets/images/items/gas_hint2.png',
                 'assets/images/items/gas_hint3.png',
-                'assets/images/items/gas_hint4.png'
+                'assets/images/items/gas_hint4.png',
+                // Thùng đá
+                'assets/images/items/thungda/1.png',
+                'assets/images/items/thungda/binham.png',
             ],
             audio: [
                 'assets/audio/background-music.mp3',

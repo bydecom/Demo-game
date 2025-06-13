@@ -42,6 +42,8 @@ export default class Item {
             if (distance > THRESHOLD) {
                 // Di chuyển nhân vật tới item trước
                 this.game.player.moveToPosition(targetX);
+                // Phát âm thanh bước chân khi di chuyển
+                this.game.audioManager.playWalkSound();
 
                 // Chờ nhân vật tới nơi rồi mới mở modal
                 const waitId = setInterval(() => {

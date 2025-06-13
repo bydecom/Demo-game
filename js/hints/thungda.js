@@ -50,6 +50,8 @@ export default class ThungDa extends Hint {
 
         if (distance > THRESHOLD) {
             this.game.player.moveToPosition(targetX);
+            // Phát âm thanh bước chân khi di chuyển
+            this.game.audioManager.playWalkSound();
             const timer = setInterval(() => {
                 if (!this.game.player.isMoving) {
                     clearInterval(timer);
@@ -81,7 +83,7 @@ export default class ThungDa extends Hint {
         container.style.position = 'relative';
         container.style.marginLeft = '10%';
         container.style.marginBottom = '10%';
-
+        container.className = 'hint-container';
 
         this.hintImage = document.createElement('img');
         this.hintImage.style.maxWidth = '90%';

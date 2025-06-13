@@ -29,6 +29,8 @@ export default class Gas extends Hint {
         if (distance > THRESHOLD) {
             // Di chuyển tới bếp trước rồi mở modal
             this.game.player.moveToPosition(targetX);
+            // Phát âm thanh bước chân khi di chuyển
+            this.game.audioManager.playWalkSound();
             const waiter = setInterval(() => {
                 if (!this.game.player.isMoving) {
                     clearInterval(waiter);

@@ -91,14 +91,34 @@ export default class Game {
     preventDefaultDragEvents() {
         // Ngăn chặn tất cả sự kiện drag mặc định
         const preventDragEvents = (e) => {
-            if (!e.target.classList.contains('draggable-item')) {
-                e.preventDefault();
-                e.stopPropagation();
-                return false;
+            // Luôn cho phép drag từ element có class draggable-item
+            if (e.target.classList.contains('draggable-item') && e.type === 'dragstart') {
+                return true; // Cho phép dragstart
             }
+            
+            // Cho phép tất cả sự kiện drag khi đang kéo từ draggable-item
+            if (e.type === 'dragover' || e.type === 'dragenter' || e.type === 'dragleave' || e.type === 'drop') {
+                // Tìm element gần nhất có các class cần thiết
+                let currentElement = e.target;
+                while (currentElement && currentElement !== document) {
+                    if (currentElement.classList.contains('hint-overlay') || 
+                        currentElement.classList.contains('hint-container') ||
+                        currentElement.classList.contains('inventory') ||
+                        currentElement.id === 'game-container' ||
+                        currentElement.id === 'game-wrapper') {
+                        return true; // Cho phép drop
+                    }
+                    currentElement = currentElement.parentElement;
+                }
+            }
+            
+            // Ngăn chặn các sự kiện khác
+            e.preventDefault();
+            e.stopPropagation();
+            return false;
         };
 
-        // Thêm event listeners cho document
+        // Thêm event listeners cho document với capture = true
         document.addEventListener('dragstart', preventDragEvents, true);
         document.addEventListener('dragover', preventDragEvents, true);
         document.addEventListener('dragenter', preventDragEvents, true);

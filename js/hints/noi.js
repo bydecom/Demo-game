@@ -106,6 +106,8 @@ export default class Noi extends Hint {
 
         if (distance > THRESHOLD) {
             this.game.player.moveToPosition(targetX);
+            // Phát âm thanh bước chân khi di chuyển
+            this.game.audioManager.playWalkSound();
             const timer = setInterval(() => {
                 if (!this.game.player.isMoving) {
                     clearInterval(timer);
@@ -138,6 +140,7 @@ export default class Noi extends Hint {
 
         const container = document.createElement('div');
         container.style.position = 'relative';
+        container.className = 'hint-container';
 
         // Pot image
         this.hintImage = document.createElement('img');

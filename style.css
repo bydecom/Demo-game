@@ -11,6 +11,26 @@ img {
     draggable: false;
 }
 
+/* Ngăn chặn tất cả hiệu ứng drag/drop mặc định */
+* {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* Ngăn chặn hiệu ứng drag cho tất cả element */
+*:not(.draggable-item) {
+    -webkit-user-drag: none;
+    -khtml-user-drag: none;
+    -moz-user-drag: none;
+    -o-user-drag: none;
+    user-drag: none;
+    draggable: false;
+}
+
 /* Chỉ cho phép kéo thả các element có class draggable-item */
 .draggable-item {
     -webkit-user-drag: element;
@@ -19,6 +39,33 @@ img {
     -o-user-drag: element;
     user-drag: element;
     draggable: true;
+    -webkit-user-select: auto;
+    -moz-user-select: auto;
+    -ms-user-select: auto;
+    user-select: auto;
+}
+
+/* Ngăn chặn hiệu ứng drop zone mặc định */
+body, html, #game-wrapper, #game-container {
+    -webkit-user-drag: none;
+    -khtml-user-drag: none;
+    -moz-user-drag: none;
+    -o-user-drag: none;
+    user-drag: none;
+}
+
+/* Ngăn chặn hiệu ứng highlight khi drag over */
+*:not(.draggable-item):not([data-allow-drop]) {
+    pointer-events: auto;
+}
+
+/* Ngăn chặn selection khi drag */
+::selection {
+    background: transparent;
+}
+
+::-moz-selection {
+    background: transparent;
 }
 
 body {

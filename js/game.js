@@ -75,6 +75,9 @@ export default class Game {
             this.audioManager.playWalkSound();
         };
 
+        // Ngăn chặn các sự kiện drag/drop mặc định toàn cục
+        this.preventDefaultDragEvents();
+
         // Không attach event listener ngay lập tức
         // Sẽ được attach khi game bắt đầu
         
@@ -82,6 +85,38 @@ export default class Game {
         window.addEventListener('resize', () => {
             this.scale = window.innerHeight / 2160;
             this.updateCamera();
+        });
+    }
+    
+    preventDefaultDragEvents() {
+        // Ngăn chặn tất cả sự kiện drag mặc định
+        const preventDragEvents = (e) => {
+            if (!e.target.classList.contains('draggable-item')) {
+                e.preventDefault();
+                e.stopPropagation();
+                return false;
+            }
+        };
+
+        // Thêm event listeners cho document
+        document.addEventListener('dragstart', preventDragEvents, true);
+        document.addEventListener('dragover', preventDragEvents, true);
+        document.addEventListener('dragenter', preventDragEvents, true);
+        document.addEventListener('dragleave', preventDragEvents, true);
+        document.addEventListener('drop', preventDragEvents, true);
+        
+        // Ngăn chặn context menu khi click chuột phải
+        document.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            return false;
+        });
+        
+        // Ngăn chặn selection text
+        document.addEventListener('selectstart', (e) => {
+            if (!e.target.classList.contains('draggable-item')) {
+                e.preventDefault();
+                return false;
+            }
         });
     }
     

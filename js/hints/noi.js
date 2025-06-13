@@ -145,6 +145,7 @@ export default class Noi extends Hint {
         this.hintImage.style.maxWidth = '90%';
         this.hintImage.style.maxHeight = '90%';
         this.hintImage.style.objectFit = 'contain';
+        this.hintImage.style.marginLeft = '60px'; // Dịch ảnh nồi sang phải để căn giữa
         this.hintImage.draggable = false;
         container.appendChild(this.hintImage);
 

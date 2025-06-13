@@ -39,6 +39,9 @@ export default class Item {
                 this.showPreviewModal();
             };
 
+            // Hủy waiter cũ (nếu có) để chỉ thực hiện một hành động tại một thời điểm
+            this.game.clearPendingWaiter();
+
             if (distance > THRESHOLD) {
                 // Di chuyển nhân vật tới item trước
                 this.game.player.moveToPosition(targetX);
@@ -48,10 +51,13 @@ export default class Item {
                 // Chờ nhân vật tới nơi rồi mới mở modal
                 const waitId = setInterval(() => {
                     if (!this.game.player.isMoving) {
-                        clearInterval(waitId);
+                        this.game.clearPendingWaiter();
                         openInteraction();
                     }
                 }, 100);
+
+                // Lưu waiter hiện tại vào game để có thể huỷ nếu người dùng click thứ khác
+                this.game.setPendingWaiter(waitId);
             } else {
                 openInteraction();
             }
@@ -150,25 +156,15 @@ export default class Item {
         img.draggable = false;
         container.appendChild(img);
 
-        // Description text cố định dưới màn
+        // Description với class CSS chung
         const desc = document.createElement('div');
+        desc.className = 'modal-description-label';
         desc.textContent = this.modalDescription;
-        Object.assign(desc.style, {
-            position: 'absolute',
-            bottom: '3%',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            color: 'white',
-            fontSize: '24px',
-            textAlign: 'center',
-            width: '80%'
-        });
         this.overlay.appendChild(desc);
 
         // Click on container to collect
         container.addEventListener('click', (e) => {
             e.stopPropagation();
-            // Play sound
             const audio = new Audio('assets/audio/get-item.mp3');
             audio.play();
             this.overlay.style.display = 'none';

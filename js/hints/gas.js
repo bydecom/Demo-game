@@ -26,6 +26,9 @@ export default class Gas extends Hint {
             this.showModal();
         };
 
+        // Hủy waiter cũ để đảm bảo chỉ có một hành động đang chờ
+        this.game.clearPendingWaiter();
+
         if (distance > THRESHOLD) {
             // Di chuyển tới bếp trước rồi mở modal
             this.game.player.moveToPosition(targetX);
@@ -33,10 +36,11 @@ export default class Gas extends Hint {
             this.game.audioManager.playWalkSound();
             const waiter = setInterval(() => {
                 if (!this.game.player.isMoving) {
-                    clearInterval(waiter);
+                    this.game.clearPendingWaiter();
                     openModal();
                 }
             }, 100);
+            this.game.setPendingWaiter(waiter);
         } else {
             openModal();
         }
@@ -70,33 +74,12 @@ export default class Gas extends Hint {
         
         this.hintImage.addEventListener('click', () => this.nextStep());
 
-        // Message text bên trong modal
+        // Message text với class CSS chung
         this.messageLabel = document.createElement('div');
-        this.messageLabel.style.color = 'white';
-        this.messageLabel.style.fontSize = '24px';
-        this.messageLabel.style.textAlign = 'center';
-        Object.assign(this.messageLabel.style, {
-            position: 'absolute',
-            bottom: '3%',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            width: '80%'
-        });
+        this.messageLabel.className = 'modal-description-label';
 
         this.closeButton = document.createElement('button');
-        this.closeButton.className = 'hint-close-button';
-        this.closeButton.style.position = 'absolute';
-        this.closeButton.style.top = '60px';
-        this.closeButton.style.left = '80%';
-        this.closeButton.style.transform = 'translateX(-50%)';
-        this.closeButton.style.width = '70px';
-        this.closeButton.style.height = '70px';
-        this.closeButton.style.backgroundImage = "url('assets/images/button/exit.png')";
-        this.closeButton.style.backgroundSize = 'contain';
-        this.closeButton.style.backgroundPosition = 'center';
-        this.closeButton.style.backgroundRepeat = 'no-repeat';
-        this.closeButton.style.border = 'none';
-        this.closeButton.style.backgroundColor = 'transparent';
+        this.closeButton.className = 'modal-close-btn';
         this.closeButton.addEventListener('click', () => this.hideModal());
 
         this.hintContainer.appendChild(this.hintImage);

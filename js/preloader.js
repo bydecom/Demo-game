@@ -3,19 +3,6 @@ class ResourcePreloader {
         // Danh sách tài nguyên cần tải
         this.resources = {
             images: [
-                // Background và UI chính
-                'assets/images/background.jpg',
-                'assets/images/menu/menu.png',
-                'assets/images/menu/loading.png',
-                'assets/images/items/balo.png',
-                'assets/images/items/noi/1.png',
-                'assets/images/items/mi.png',
-                'assets/images/items/gas_item.png',
-                'assets/images/items/noi/1.png',
-                'assets/images/items/mi.png',
-                'assets/images/button/back.png',
-                'assets/images/button/exit.png',
-                'assets/canh7.png',
                 'assets/images/move/01.png',
                 'assets/images/move/02.png',
                 'assets/images/move/03.png',
@@ -36,6 +23,20 @@ class ResourcePreloader {
                 'assets/images/move/18.png',
                 'assets/images/move/19.png',
                 'assets/images/move/00.png',
+                // Background và UI chính
+                'assets/images/background.jpg',
+                'assets/images/menu/menu.png',
+                'assets/images/menu/loading.png',
+                'assets/images/items/balo.png',
+                'assets/images/items/noi/1.png',
+                'assets/images/items/mi.png',
+                'assets/images/items/gas_item.png',
+                'assets/images/items/noi/1.png',
+                'assets/images/items/mi.png',
+                'assets/images/button/back.png',
+                'assets/images/button/exit.png',
+                'assets/canh7.png',
+
                 // Hint nồi
                 'assets/images/items/noi/1.png',
                 'assets/images/items/mi.png',
@@ -95,7 +96,11 @@ class ResourcePreloader {
                 'assets/images/npc/1.png',
                 'assets/images/npc/2.png',
                 'assets/images/npc/3.png',
-                'assets/images/npc/4.png'
+                'assets/images/npc/4.png',
+                'assets/images/items/maychu/maychu.png',
+                'assets/images/items/maychu/manhinhmaytinhtat.png',
+                'assets/images/items/maychu/manhinhmaytinhmo.png',
+                'assets/images/items/maychu/nutmaytinh.png'
             ],
             audio: [
                 'assets/audio/background-music.mp3',

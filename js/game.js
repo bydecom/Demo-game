@@ -52,6 +52,9 @@ export default class Game {
         
         this.cameraAnimationId = null;
 
+        // Quản lý hành động chờ xử lý (ví dụ chờ nhân vật đi tới mục tiêu rồi mở modal)
+        this.pendingWaiter = null;
+
         // Khởi tạo game với nhật ký
         this.initializeGame();
     }
@@ -311,12 +314,13 @@ export default class Game {
         this.map.resetHints();
 
         // Reset camera position
-        this.currentScrollX = 0;
+        // Đặt transition tạm thời về none để cập nhật transform tức thì
         this.gameContainer.style.transition = 'none';
-        this.gameContainer.style.transform = `translate3d(0px, 0px, 0) scale(${this.scale})`;
+        // Cập nhật camera ngay lập tức để canh giữa nhân vật
+        this.updateCamera();
         // Force a reflow để đảm bảo transform được áp dụng ngay lập tức
         this.gameContainer.offsetHeight;
-        // Bật lại animation cho camera
+        // Bật lại animation cho camera sau khi đã định vị chính xác
         this.gameContainer.style.transition = 'transform 0.8s cubic-bezier(0.22, 1, 0.36, 1)';
 
         // Khởi tạo lại nhật ký trong inventory
@@ -342,5 +346,21 @@ export default class Game {
             onClick: () => this.diary.openDiary()
         };
         this.inventory.addItem(diaryItem);
+    }
+
+    // ---------------- Pending waiter helpers -----------------
+    setPendingWaiter(waiterId) {
+        // Xóa waiter cũ nếu có
+        if (this.pendingWaiter) {
+            clearInterval(this.pendingWaiter);
+        }
+        this.pendingWaiter = waiterId;
+    }
+
+    clearPendingWaiter() {
+        if (this.pendingWaiter) {
+            clearInterval(this.pendingWaiter);
+            this.pendingWaiter = null;
+        }
     }
 } 

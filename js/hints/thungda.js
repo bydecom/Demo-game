@@ -48,16 +48,20 @@ export default class ThungDa extends Hint {
             this.showModal();
         };
 
+        // Huỷ waiter cũ
+        this.game.clearPendingWaiter();
+
         if (distance > THRESHOLD) {
             this.game.player.moveToPosition(targetX);
             // Phát âm thanh bước chân khi di chuyển
             this.game.audioManager.playWalkSound();
             const timer = setInterval(() => {
                 if (!this.game.player.isMoving) {
-                    clearInterval(timer);
+                    this.game.clearPendingWaiter();
                     open();
                 }
             }, 100);
+            this.game.setPendingWaiter(timer);
         } else {
             open();
         }
@@ -95,40 +99,15 @@ export default class ThungDa extends Hint {
 
         // Close button đặt ở đỉnh giữa modal
         const closeBtn = document.createElement('button');
-        Object.assign(closeBtn.style, {
-            position: 'absolute',
-            top: '60px',
-            left: '70%',
-            transform: 'translateX(-50%)',
-            width: '70px',
-            height: '70px',
-            backgroundImage: "url('assets/images/button/exit.png')",
-            backgroundSize: 'contain',
-            backgroundRepeat: 'no-repeat',
-            backgroundPosition: 'center',
-            border: 'none',
-            backgroundColor: 'transparent',
-            cursor: 'pointer'
-        });
+        closeBtn.className = 'modal-close-btn';
         closeBtn.addEventListener('click', () => this.hideModal());
-        container.appendChild(closeBtn);
+        this.overlay.appendChild(closeBtn);
 
-        // Description
+        // Description với class CSS chung
         const desc = document.createElement('div');
+        desc.className = 'modal-description-label';
         desc.textContent = 'Một thùng đá cũ, có vẻ chứa thứ gì đó bên trong.';
-        Object.assign(desc.style, {
-            position: 'absolute',
-            bottom: '3%',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            width: '80%',
-            color: 'white',
-            fontSize: '24px',
-            textAlign: 'center'
-        });
         this.overlay.appendChild(desc);
-
-        // Không đóng modal khi click container; chỉ xử lý qua hình hoặc button ngoài nếu muốn
 
         this.overlay.appendChild(container);
         document.body.appendChild(this.overlay);
@@ -206,7 +185,7 @@ export default class ThungDa extends Hint {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            zIndex: '1001' // cao hơn hint overlay một chút
+            zIndex: '1001'
         });
 
         const container = document.createElement('div');
@@ -217,24 +196,15 @@ export default class ThungDa extends Hint {
 
         const img = document.createElement('img');
         img.src = 'assets/images/items/canuoc_item.png';
-        img.style.maxWidth = '90%';
-        img.style.maxHeight = '90%';
+        img.style.maxWidth = '60%';
+        img.style.maxHeight = '60%';
         img.style.objectFit = 'contain';
         img.draggable = false;
         container.appendChild(img);
 
         const desc = document.createElement('div');
+        desc.className = 'modal-description-label';
         desc.textContent = 'Một ca nước mát lạnh.';
-        Object.assign(desc.style, {
-            position: 'absolute',
-            bottom: '5%',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            color: 'white',
-            fontSize: '24px',
-            textAlign: 'center',
-            width: '80%'
-        });
         this.cupOverlay.appendChild(desc);
 
         container.addEventListener('click', (e) => {
@@ -243,7 +213,6 @@ export default class ThungDa extends Hint {
             if(!this.cupCollected){
                 this.collectCup();
             }
-            // Chuyển sang bước 3 và hiển thị lại modal thùng đá (trạng thái đã lấy ca)
             this.currentStep = 3;
             this.updateHintImage();
             this.showModal();

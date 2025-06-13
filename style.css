@@ -702,4 +702,33 @@ body {
     background-repeat: no-repeat;
     background-position: center;
     cursor: url('assets/images/chuot32x32.png'), auto;
+}
+
+/* Global modal close button */
+.modal-close-btn {
+    position: fixed;
+    top: 40px;
+    right: 40px;
+    width: 70px;
+    height: 70px;
+    background-image: url('assets/images/button/exit.png');
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    border: none;
+    background-color: transparent;
+    cursor: pointer;
+    z-index: 1100;
+}
+
+/* Modal label style - chung cho tất cả modal descriptions */
+.modal-description-label {
+    position: absolute;
+    bottom: 3%;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80%;
+    color: white;
+    font-size: 24px;
+    text-align: center;
 } 

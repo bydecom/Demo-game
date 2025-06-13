@@ -3,6 +3,7 @@ import Gas from './hints/gas.js';
 import Noi from './hints/noi.js';
 import Item from './item.js';
 import NPC from './hints/npc.js';
+import MayChu from './hints/maychu.js';
 
 export default class Map {
     constructor(id, game) {
@@ -139,6 +140,16 @@ export default class Map {
                         'assets/images/npc/4.png'
                     ],
                     frameInterval: 300
+                },
+                {
+                    id: 'maychu',
+                    type: 'MayChu',
+                    name: 'Máy chủ',
+                    x: 5924,
+                    y: 820,
+                    width: 447,
+                    height: 369,
+                    image: 'assets/images/items/maychu/maychu.png'
                 }
             ]
         };
@@ -208,6 +219,13 @@ export default class Map {
                     case 'NPC':
                     case 'npc':
                         hint = new NPC({
+                            ...hintData,
+                            game: this.game
+                        });
+                        break;
+                    case 'MayChu':
+                    case 'maychu':
+                        hint = new MayChu({
                             ...hintData,
                             game: this.game
                         });

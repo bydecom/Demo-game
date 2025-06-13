@@ -104,16 +104,20 @@ export default class Noi extends Hint {
             this.showModal();
         };
 
+        // Huỷ waiter cũ
+        this.game.clearPendingWaiter();
+
         if (distance > THRESHOLD) {
             this.game.player.moveToPosition(targetX);
             // Phát âm thanh bước chân khi di chuyển
             this.game.audioManager.playWalkSound();
             const timer = setInterval(() => {
                 if (!this.game.player.isMoving) {
-                    clearInterval(timer);
+                    this.game.clearPendingWaiter();
                     open();
                 }
             }, 100);
+            this.game.setPendingWaiter(timer);
         } else {
             open();
         }
@@ -148,7 +152,7 @@ export default class Noi extends Hint {
         this.hintImage.style.maxWidth = '90%';
         this.hintImage.style.maxHeight = '90%';
         this.hintImage.style.objectFit = 'contain';
-        this.hintImage.style.marginLeft = '60px'; // Dịch ảnh nồi sang phải để căn giữa
+        this.hintImage.style.marginLeft = '60px';
         this.hintImage.draggable = false;
         container.appendChild(this.hintImage);
 
@@ -169,40 +173,16 @@ export default class Noi extends Hint {
         this.gasButton.addEventListener('click', () => this.handleGasToggle());
         container.appendChild(this.gasButton);
 
-        /* ------------------------------------------------------------ */
-        // Message label (bottom center)
+        // Message label với class CSS chung
         this.messageLabel = document.createElement('div');
-        Object.assign(this.messageLabel.style, {
-            position: 'absolute',
-            bottom: '3%',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            width: '80%',
-            color: 'white',
-            fontSize: '24px',
-            textAlign: 'center'
-        });
+        this.messageLabel.className = 'modal-description-label';
         container.appendChild(this.messageLabel);
 
         // Close button
         const closeBtn = document.createElement('button');
-        Object.assign(closeBtn.style, {
-            position: 'absolute',
-            top: '100px',
-            left: '70%',
-            transform: 'translateX(-50%)',
-            width: '70px',
-            height: '70px',
-            backgroundImage: "url('assets/images/button/exit.png')",
-            backgroundSize: 'contain',
-            backgroundRepeat: 'no-repeat',
-            backgroundPosition: 'center',
-            border: 'none',
-            backgroundColor: 'transparent',
-            cursor: 'pointer'
-        });
+        closeBtn.className = 'modal-close-btn';
         closeBtn.addEventListener('click', () => this.hideModal());
-        container.appendChild(closeBtn);
+        this.overlay.appendChild(closeBtn);
 
         // Drag-and-drop setup
         container.addEventListener('dragover', (e) => e.preventDefault());
@@ -213,7 +193,6 @@ export default class Noi extends Hint {
         document.body.appendChild(this.overlay);
         this.modalCreated = true;
 
-        // Cập nhật label lần đầu
         this.updateHintMessage();
     }
 
@@ -238,6 +217,11 @@ export default class Noi extends Hint {
         // Khôi phục animation sôi nếu nước đang sôi
         if (this.gasOn && !this.boilInterval) {
             this.startBoiling();
+        } else if (this.gasOn) {
+            // Đảm bảo âm thanh nước sôi tiếp tục nếu modal được mở lại
+            if (this.game.audioManager) {
+                this.game.audioManager.playBoilingSound();
+            }
         }
     }
 
@@ -329,9 +313,8 @@ export default class Noi extends Hint {
     }
 
     showBowlDoneModal() {
-        // Ẩn modal nồi phía sau
         if (this.overlay) this.overlay.style.display = 'none';
-        // Tạo overlay modal giống ca nước
+        
         this.bowlModal = document.createElement('div');
         Object.assign(this.bowlModal.style, {
             position: 'fixed',
@@ -345,6 +328,7 @@ export default class Noi extends Hint {
             alignItems: 'center',
             zIndex: '2000'
         });
+        
         const container = document.createElement('div');
         container.style.position = 'relative';
         container.style.display = 'flex';
@@ -365,24 +349,15 @@ export default class Noi extends Hint {
         container.appendChild(img);
         
         const desc = document.createElement('div');
+        desc.className = 'modal-description-label';
         desc.textContent = 'Một tô mì nóng hổi đã sẵn sàng!';
-        Object.assign(desc.style, {
-            position: 'absolute',
-            bottom: '5%',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            color: 'white',
-            fontSize: '24px',
-            textAlign: 'center',
-            width: '80%'
-        });
         this.bowlModal.appendChild(desc);
         
-        // Click vào container để thu thập tô mì done
         container.addEventListener('click', (e) => {
             e.stopPropagation();
             this.collectBowlDone();
         });
+        
         this.bowlModal.appendChild(container);
         document.body.appendChild(this.bowlModal);
     }

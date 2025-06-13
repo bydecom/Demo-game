@@ -110,12 +110,16 @@ export default class Diary {
     nextPage() {
         if (this.currentPage < this.maxPages) {
             this.showPage(this.currentPage + 1);
+            // Chỉ phát book-sound, không phát get-item
+            // this.game.audioManager.playItemSound();
         }
     }
 
     prevPage() {
         if (this.currentPage > 1) {
             this.showPage(this.currentPage - 1);
+            // Chỉ phát book-sound, không phát get-item
+            // this.game.audioManager.playItemSound();
         }
     }
 } 

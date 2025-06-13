@@ -6,6 +6,7 @@ export default class Inventory {
         this.maxSlots = 5; // Số lượng slots tối đa
         this.inventoryElement = null;
         this.isOpen = false;
+        this.autoCloseTimeout = null; // timeout tự động đóng
         
         // Kích thước gốc của slot.png
         this.slotImageWidth = 1899;
@@ -67,6 +68,11 @@ export default class Inventory {
             itemContainer.style.backgroundRepeat = 'no-repeat';
             itemContainer.style.backgroundPosition = 'center';
             
+            // Reset timer khi click vào item
+            itemContainer.addEventListener('click', (e) => {
+                this.startAutoCloseTimer();
+            });
+            
             this.inventoryElement.appendChild(itemContainer);
         });
         
@@ -75,9 +81,9 @@ export default class Inventory {
         toggleButton.className = 'inventory-toggle';
         toggleButton.style.position = 'fixed';
         toggleButton.style.bottom = '20px';
-        toggleButton.style.left = '20px';
-        toggleButton.style.width = '150px';
-        toggleButton.style.height = '150px';
+        toggleButton.style.left = '50px';
+        toggleButton.style.width = '100px';
+        toggleButton.style.height = '100px';
         toggleButton.style.border = 'none';
         toggleButton.style.borderRadius = '5px';
         toggleButton.style.zIndex = '1001';
@@ -88,6 +94,7 @@ export default class Inventory {
         baloImage.style.width = '100%';
         baloImage.style.height = '100%';
         baloImage.style.objectFit = 'contain';
+        baloImage.draggable = false; // Ngăn kéo thả hình balo
         toggleButton.appendChild(baloImage);
         
         // Thêm sự kiện click để mở/đóng inventory
@@ -103,6 +110,7 @@ export default class Inventory {
         // Thêm stopPropagation cho inventory element
         this.inventoryElement.addEventListener('click', (e) => {
             e.stopPropagation();
+            this.startAutoCloseTimer(); // reset timer khi click inventory
         });
     }
 
@@ -117,11 +125,27 @@ export default class Inventory {
     openInventory() {
         this.inventoryElement.style.display = 'block';
         this.isOpen = true;
+        this.startAutoCloseTimer();
     }
 
     closeInventory() {
         this.inventoryElement.style.display = 'none';
         this.isOpen = false;
+        this.clearAutoCloseTimer();
+    }
+
+    startAutoCloseTimer() {
+        this.clearAutoCloseTimer();
+        this.autoCloseTimeout = setTimeout(() => {
+            this.closeInventory();
+        }, 10000);
+    }
+
+    clearAutoCloseTimer() {
+        if (this.autoCloseTimeout) {
+            clearTimeout(this.autoCloseTimeout);
+            this.autoCloseTimeout = null;
+        }
     }
     
     addItem(item) {
@@ -139,8 +163,8 @@ export default class Inventory {
         const emptySlot = Array.from(slots).find(slot => !slot.style.backgroundImage || slot.style.backgroundImage === 'none');
         
         if (emptySlot) {
-            // Thêm item vào slot
-            emptySlot.style.backgroundImage = `url('${item.image}')`;
+            // Thêm item vào slot, ưu tiên sử dụng inventoryImage nếu có
+            emptySlot.style.backgroundImage = `url('${item.inventoryImage || item.image}')`;
             // Nếu item có chỉ định kích thước background riêng cho inventory thì ghi đè
             if (item.backgroundSize) {
                 emptySlot.style.backgroundSize = item.backgroundSize;
@@ -148,12 +172,13 @@ export default class Inventory {
             emptySlot.title = item.name;
             
             // Làm cho slot có thể kéo được
-            emptySlot.setAttribute('draggable', true);
+            emptySlot.className = emptySlot.className ? emptySlot.className + ' draggable-item' : 'inventory-item draggable-item';
             // Lưu ID của item vào thuộc tính dataset để dễ dàng lấy ra khi kéo
             emptySlot.dataset.itemId = item.id; 
 
             // Sự kiện khi bắt đầu kéo
             emptySlot.addEventListener('dragstart', (e) => {
+                this.startAutoCloseTimer(); // reset timer khi bắt đầu kéo
                 e.dataTransfer.setData('text/plain', item.id); // Truyền ID của item
                 e.dataTransfer.effectAllowed = 'move'; // Cho phép di chuyển item
                 emptySlot.style.opacity = '0.5'; // Giảm độ mờ khi kéo
@@ -162,6 +187,12 @@ export default class Inventory {
             // Sự kiện khi kết thúc kéo
             emptySlot.addEventListener('dragend', () => {
                 emptySlot.style.opacity = '1'; // Khôi phục độ mờ
+                this.startAutoCloseTimer(); // reset timer khi kết thúc kéo
+            });
+
+            // Sự kiện khi đang kéo qua inventory
+            this.inventoryElement.addEventListener('dragover', (e) => {
+                this.startAutoCloseTimer();
             });
 
             // Thêm hover effect
@@ -210,7 +241,7 @@ export default class Inventory {
             if (targetSlot) {
                 targetSlot.style.backgroundImage = 'none'; // Xóa hình ảnh
                 targetSlot.title = ''; // Xóa tooltip
-                targetSlot.removeAttribute('draggable'); // Loại bỏ khả năng kéo
+                targetSlot.className = 'inventory-item'; // Xóa class draggable-item
                 delete targetSlot.dataset.itemId; // Xóa dữ liệu item id
                 
                 // (Tùy chọn) Xóa bỏ các event listener nếu được thêm riêng lẻ cho slot này

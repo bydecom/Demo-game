@@ -1,6 +1,26 @@
 /* Import Saira Font */
 @import url('https://fonts.googleapis.com/css2?family=Saira:wght@300;400;500;600;700&display=swap');
 
+/* Ngăn chặn kéo thả tất cả hình ảnh trong game */
+img {
+    -webkit-user-drag: none;
+    -khtml-user-drag: none;
+    -moz-user-drag: none;
+    -o-user-drag: none;
+    user-drag: none;
+    draggable: false;
+}
+
+/* Chỉ cho phép kéo thả các element có class draggable-item */
+.draggable-item {
+    -webkit-user-drag: element;
+    -khtml-user-drag: element;
+    -moz-user-drag: element;
+    -o-user-drag: element;
+    user-drag: element;
+    draggable: true;
+}
+
 body {
     margin: 0;
     padding: 0;

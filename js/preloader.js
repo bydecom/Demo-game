@@ -10,18 +10,11 @@ class ResourcePreloader {
                 'assets/images/items/balo.png',
                 'assets/images/items/noi/1.png',
                 'assets/images/items/mi.png',
-                'assets/images/items/gas.png',
+                'assets/images/items/gas_item.png',
                 'assets/images/items/noi/1.png',
                 'assets/images/items/mi.png',
-                'assets/images/items/gas.png',
                 'assets/images/button/back.png',
                 'assets/images/button/exit.png',
-                'assets/images/button/next.png',
-                'assets/images/button/prev.png',
-                'assets/images/button/play.png',
-                'assets/images/button/pause.png',
-                'assets/images/button/restart.png',
-                'assets/images/button/mute.png',
                 'assets/canh7.png',
                 'assets/images/move/01.png',
                 'assets/images/move/02.png',
@@ -74,6 +67,29 @@ class ResourcePreloader {
                 'assets/images/items/thungda/thungda_hint2.png',
                 'assets/images/items/thungda/thungda_hint3.png',
                 'assets/images/items/thungda/canuoc_item.png',
+                //mì
+                'assets/images/items/mi.png',
+                'assets/images/items/giavi1.png',
+                'assets/images/items/giavi2.png',
+                //noi
+                'assets/images/items/noi/1.png',
+                'assets/images/items/noi/2.png',
+                'assets/images/items/noi/3.png',
+                'assets/images/items/noi/4.png',
+                'assets/images/items/noi/5.png',
+                'assets/images/items/noi/6.png',
+                'assets/images/items/noi/7.png',
+                'assets/images/items/noi/8.png',
+
+                //gas
+                'assets/images/items/gas.png',
+                'assets/images/items/gas_hint1.png',
+                'assets/images/items/gas_hint2.png',
+                //tô mì
+                'assets/images/items/tomi_map.png',
+                'assets/images/items/tomi_inventory.png',
+
+                
                 //npc
                 'assets/images/npc/1.png',
                 'assets/images/npc/2.png',
@@ -82,7 +98,10 @@ class ResourcePreloader {
             ],
             audio: [
                 'assets/audio/background-music.mp3',
-                'assets/audio/footstep.mp3'
+                'assets/audio/footstep.mp3',
+                'assets/audio/get-item.mp3',
+                'assets/audio/boiling-water.mp3',
+
             ]
         };
 
@@ -101,6 +120,10 @@ class ResourcePreloader {
         this._createLoadedPromise();
         // Bắt đầu preload ngay khi khởi tạo
         this.startPreloading();
+
+        this.boilingSound = new Audio('assets/audio/boiling-water.mp3');
+        this.boilingSound.loop = true;
+        this.boilingSound.volume = 0.5;
     }
 
     startPreloading() {

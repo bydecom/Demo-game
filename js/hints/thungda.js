@@ -11,8 +11,8 @@ export default class ThungDa extends Hint {
 
         // Thông số overlay phía trước (bình + ấm) có thể truyền từ map
         this.frontImage = config.frontImage || 'assets/images/items/thungda/binham.png';
-        this.frontOffsetX = config.frontOffsetX || 142; // dịch so với x của thùng đá
-        this.frontOffsetY = config.frontOffsetY || 147;
+        this.frontOffsetX = config.frontOffsetX || 35; // dịch so với x của thùng đá
+        this.frontOffsetY = config.frontOffsetY || 130;
         this.frontWidth = config.frontWidth || 830;
         this.frontHeight = config.frontHeight || 678;
 
@@ -87,6 +87,7 @@ export default class ThungDa extends Hint {
         this.hintImage.style.maxWidth = '90%';
         this.hintImage.style.maxHeight = '90%';
         this.hintImage.style.objectFit = 'contain';
+        this.hintImage.draggable = false;
         this.hintImage.addEventListener('click', () => this.onImageClick());
         container.appendChild(this.hintImage);
 
@@ -94,7 +95,7 @@ export default class ThungDa extends Hint {
         const closeBtn = document.createElement('button');
         Object.assign(closeBtn.style, {
             position: 'absolute',
-            top: '100px',
+            top: '60px',
             left: '70%',
             transform: 'translateX(-50%)',
             width: '70px',
@@ -168,6 +169,7 @@ export default class ThungDa extends Hint {
             onClick:()=>{}
         };
         this.game.inventory.addItem(cupItem);
+        this.game.audioManager.playItemSound();
     }
 
     updateHintImage(){
@@ -216,6 +218,7 @@ export default class ThungDa extends Hint {
         img.style.maxWidth = '90%';
         img.style.maxHeight = '90%';
         img.style.objectFit = 'contain';
+        img.draggable = false;
         container.appendChild(img);
 
         const desc = document.createElement('div');

@@ -14,6 +14,8 @@ export default class Noi extends Hint {
         this.noodlePackUsed = false; // true khi gói mì từ inventory đã bỏ
         this.spiceAdded = false;
         this.boilInterval = null;
+        this.bowlAdded = false;
+        this.bowlCollected = false;
 
         // Reference tới hint bếp gas (để kiểm tra trạng thái bếp)
         this.gasHint = null;
@@ -36,6 +38,12 @@ export default class Noi extends Hint {
 
     updateGasButtonState() {
         if (!this.gasButton) return;
+        // Nếu đã bỏ gia vị xong, cho phép tắt bếp
+        if (this.noodleAdded && this.spiceAdded && this.gasOn) {
+            this.gasButton.style.filter = 'none';
+            this.gasButton.style.pointerEvents = 'auto';
+            return;
+        }
         const enabled = this.waterAdded && this.isGasReady();
         this.gasButton.style.filter = enabled ? 'none' : 'grayscale(70%)';
         this.gasButton.style.pointerEvents = enabled ? 'auto' : 'none';
@@ -43,12 +51,43 @@ export default class Noi extends Hint {
 
     updatePotImage() {
         if (!this.hintImage) return;
+        if (this.bowlCollected) {
+            this.hintImage.src = 'assets/images/items/noi/9.png';
+            this.updateHintMessage();
+            return;
+        }
+        // Nếu đã bỏ gia vị và bếp đã tắt, giữ frame 7
+        if (this.noodleAdded && this.spiceAdded && !this.gasOn) {
+            this.hintImage.src = 'assets/images/items/noi/7.png';
+            this.updateHintMessage();
+            return;
+        }
         if (!this.waterAdded) {
             this.hintImage.src = 'assets/images/items/noi/1.png';
         } else if (!this.gasOn) {
             this.hintImage.src = 'assets/images/items/noi/2.png';
+        } else {
+            // Nếu đang sôi, chọn frame set phù hợp với trạng thái
+            if (this.noodleAdded && this.spiceAdded) {
+                this.boilFrames = ['7', '8'];
+            } else if (this.noodleAdded) {
+                this.boilFrames = ['5', '6'];
+            } else {
+                this.boilFrames = ['3', '4'];
+            }
+            // Nếu chưa có interval, tạo mới
+            if (!this.boilInterval) {
+                let idx = 0;
+                this.boilInterval = setInterval(() => {
+                    if (!this.gasOn) return;
+                    if (!this.boilFrames || this.boilFrames.length === 0) return;
+                    idx = (idx + 1) % this.boilFrames.length;
+                    this.hintImage.src = `assets/images/items/noi/${this.boilFrames[idx]}.png`;
+                }, 500);
+            }
+            // Hiển thị frame đầu tiên
+            this.hintImage.src = `assets/images/items/noi/${this.boilFrames[0]}.png`;
         }
-        // boiling handled by interval swapping between 3/4
         this.updateHintMessage();
     }
 
@@ -106,6 +145,7 @@ export default class Noi extends Hint {
         this.hintImage.style.maxWidth = '90%';
         this.hintImage.style.maxHeight = '90%';
         this.hintImage.style.objectFit = 'contain';
+        this.hintImage.draggable = false;
         container.appendChild(this.hintImage);
 
         // Gas button (bottom-right)
@@ -121,6 +161,7 @@ export default class Noi extends Hint {
             userSelect: 'none',
             zIndex: '2'
         });
+        this.gasButton.draggable = false;
         this.gasButton.addEventListener('click', () => this.handleGasToggle());
         container.appendChild(this.gasButton);
 
@@ -177,9 +218,23 @@ export default class Noi extends Hint {
     /* ------------------------------------------------------------------ */
     showModal() {
         this.overlay.style.display = 'flex';
+        
+        // Disable gas button if water is boiling
+        if (this.gasOn) {
+            this.gasButton.style.pointerEvents = 'none';
+            this.gasButton.style.filter = 'grayscale(30%)';
+            this.gasButton.src = 'assets/images/items/gas_button_on.png';
+        } else {
         this.updateGasButtonState();
+        }
+        
         this.updatePotImage();
         this.updateHintMessage();
+
+        // Khôi phục animation sôi nếu nước đang sôi
+        if (this.gasOn && !this.boilInterval) {
+            this.startBoiling();
+        }
     }
 
     hideModal() {
@@ -190,6 +245,8 @@ export default class Noi extends Hint {
             clearInterval(this.boilInterval);
             this.boilInterval = null;
         }
+        // Dừng tiếng nước sôi nếu còn phát
+        if (this.game.audioManager) this.game.audioManager.stopBoilingSound();
     }
 
     /* ------------------------------------------------------------------ */
@@ -206,6 +263,13 @@ export default class Noi extends Hint {
             this.onVatMiDropped();
         } else if (itemId === 'spice' && this.gasOn && this.noodleAdded && !this.spiceAdded) {
             this.onSpiceDropped();
+        } else if (itemId === 'to_mi' && this.noodleAdded && this.spiceAdded && !this.bowlAdded) {
+            if (this.gasOn) {
+                this.messageLabel.textContent = 'Hãy tắt bếp trước khi lấy mì ra tô!';
+                this.updateGasButtonState();
+                return;
+            }
+            this.onBowlDropped();
         } else {
             this.game.messageManager.showMessage('Không thể sử dụng vật phẩm này!');
         }
@@ -251,6 +315,106 @@ export default class Noi extends Hint {
         this.updateHintMessage();
     }
 
+    onBowlDropped() {
+        // Đánh dấu đã thêm tô mì
+        this.bowlAdded = true;
+        // Xóa tô mì khỏi inventory
+        this.game.inventory.removeItem('to_mi');
+        // Hiện modal với hình tomi_done.png
+        this.showBowlDoneModal();
+    }
+
+    showBowlDoneModal() {
+        // Ẩn modal nồi phía sau
+        if (this.overlay) this.overlay.style.display = 'none';
+        // Tạo overlay modal giống ca nước
+        this.bowlModal = document.createElement('div');
+        Object.assign(this.bowlModal.style, {
+            position: 'fixed',
+            top: '0',
+            left: '0',
+            width: '100%',
+            height: '100%',
+            backgroundColor: 'rgba(0,0,0,0.7)',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: '2000'
+        });
+        const container = document.createElement('div');
+        container.style.position = 'relative';
+        container.style.display = 'flex';
+        container.style.flexDirection = 'column';
+        container.style.alignItems = 'center';
+        container.style.justifyContent = 'center';
+        container.style.width = '400px';
+        container.style.height = '400px';
+        container.style.background = 'transparent';
+        
+        const img = document.createElement('img');
+        img.src = 'assets/images/items/tomi_done.png';
+        img.style.maxWidth = '90%';
+        img.style.maxHeight = '90%';
+        img.style.objectFit = 'contain';
+        img.style.background = 'transparent';
+        img.draggable = false;
+        container.appendChild(img);
+        
+        const desc = document.createElement('div');
+        desc.textContent = 'Một tô mì nóng hổi đã sẵn sàng!';
+        Object.assign(desc.style, {
+            position: 'absolute',
+            bottom: '5%',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            color: 'white',
+            fontSize: '24px',
+            textAlign: 'center',
+            width: '80%'
+        });
+        this.bowlModal.appendChild(desc);
+        
+        // Click vào container để thu thập tô mì done
+        container.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.collectBowlDone();
+        });
+        this.bowlModal.appendChild(container);
+        document.body.appendChild(this.bowlModal);
+    }
+
+    collectBowlDone() {
+        // Xóa modal tô mì
+        if (this.bowlModal) {
+            this.bowlModal.remove();
+            this.bowlModal = null;
+        }
+        // Hiện lại modal nồi (nếu chưa đóng)
+        if (this.overlay) this.overlay.style.display = 'flex';
+        // Thêm tô mì done vào inventory
+        this.game.inventory.addItem({
+            id: 'to_mi_done',
+            name: 'Tô mì đã nấu',
+            image: 'assets/images/items/tomi_done.png',
+            inventoryImage: 'assets/images/items/tomi_done.png',
+            clickMessage: 'Bạn đã thu thập tô mì đã nấu!'
+        });
+        this.game.audioManager.playItemSound();
+        // Đổi hình nồi thành 9.png
+        if (this.hintImage) {
+            this.hintImage.src = 'assets/images/items/noi/9.png';
+        }
+        // Đánh dấu đã thu thập để updatePotImage không ghi đè nữa
+        this.bowlCollected = true;
+        // Dừng animation sôi nếu còn
+        if (this.boilInterval) {
+            clearInterval(this.boilInterval);
+            this.boilInterval = null;
+        }
+        // Dừng tiếng nước sôi
+        if (this.game.audioManager) this.game.audioManager.stopBoilingSound();
+    }
+
     /* ------------------------------------------------------------------ */
     // Gas / boiling
     /* ------------------------------------------------------------------ */
@@ -267,6 +431,28 @@ export default class Noi extends Hint {
         // Nếu bếp gas vẫn chưa ở trạng thái sẵn sàng (ví dụ chưa đóng nắp), thông báo chung
         if (!this.isGasReady()) {
             this.game.messageManager.showMessage('Bếp gas chưa sẵn sàng!');
+            return;
+        }
+        // Nếu đã bỏ gia vị xong và bếp đang bật, cho phép tắt bếp
+        if (this.noodleAdded && this.spiceAdded && this.gasOn) {
+            // Tắt bếp
+            this.gasOn = false;
+            this.gasButton.src = 'assets/images/items/gas_button_off.png';
+            this.gasButton.style.pointerEvents = 'none';
+            this.gasButton.style.filter = 'grayscale(70%)';
+            if (this.boilInterval) {
+                clearInterval(this.boilInterval);
+                this.boilInterval = null;
+            }
+            // Dừng tiếng nước sôi
+            if (this.game.audioManager) this.game.audioManager.stopBoilingSound();
+            this.updatePotImage();
+            this.updateHintMessage();
+            return;
+        }
+        // Ngăn chặn việc bật lại bếp gas nếu đã có mì hoặc gia vị (khi chưa đến bước tắt bếp)
+        if (this.noodleAdded || this.spiceAdded) {
+            this.game.messageManager.showMessage('Không thể tắt bếp gas khi đã nấu mì!');
             return;
         }
         this.startBoiling();
@@ -289,6 +475,9 @@ export default class Noi extends Hint {
             idx = (idx + 1) % this.boilFrames.length;
             this.hintImage.src = `assets/images/items/noi/${this.boilFrames[idx]}.png`;
         }, 500);
+
+        // Phát tiếng nước sôi
+        if (this.game.audioManager) this.game.audioManager.playBoilingSound();
 
         this.updateHintMessage();
     }
@@ -314,7 +503,7 @@ export default class Noi extends Hint {
         });
 
         // Cho phép kéo vắt mì
-        vatMi.setAttribute('draggable', true);
+        vatMi.className = 'draggable-item';
         vatMi.addEventListener('dragstart', (e) => {
             e.dataTransfer.setData('text/plain', 'vatmi');
             e.dataTransfer.effectAllowed = 'move';
@@ -333,7 +522,7 @@ export default class Noi extends Hint {
         });
 
         // Cho phép kéo gói gia vị
-        giaVi.setAttribute('draggable', true);
+        giaVi.className = 'draggable-item';
         giaVi.addEventListener('dragstart', (e) => {
             e.dataTransfer.setData('text/plain', 'spice');
             e.dataTransfer.effectAllowed = 'move';

@@ -7,14 +7,19 @@ export default class AudioManager {
         this.bgMusic.src = 'assets/audio/background-music.mp3';
         
         this.walkSound = new Audio('assets/audio/footstep.mp3');
-        this.walkSound.volume = 0.3;
+        this.walkSound.volume = 1;
         this.walkSound.loop = true;
         
         this.itemSound = document.createElement('audio');
-        this.itemSound.src = 'assets/audio/item-pickup.mp3';
+        this.itemSound.src = 'assets/audio/get-item.mp3';
+        this.itemSound.volume = 0.3;
         
         this.bookSound = new Audio('assets/audio/book_sound.mp3');
         this.bookSound.volume = 0.5;
+        
+        this.boilingSound = new Audio('assets/audio/boiling-water.mp3');
+        this.boilingSound.loop = true;
+        this.boilingSound.volume = 0.5;
         
         // Thêm vào DOM
         document.getElementById('game-wrapper').appendChild(this.bgMusic);
@@ -22,7 +27,6 @@ export default class AudioManager {
         
         // Thiết lập âm lượng
         this.bgMusic.volume = 0.3;
-        this.walkSound.volume = 0.3;
         this.itemSound.volume = 0.7;
         
         this.isMuted = false;
@@ -62,6 +66,7 @@ export default class AudioManager {
         this.walkSound.muted = this.isMuted;
         this.itemSound.muted = this.isMuted;
         this.bookSound.muted = this.isMuted;
+        this.boilingSound.muted = this.isMuted;
         this.audioControl.textContent = this.isMuted ? '🔇' : '🔊';
     }
     
@@ -77,6 +82,16 @@ export default class AudioManager {
     playBookSound() {
         this.bookSound.currentTime = 0;
         this.bookSound.play();
+    }
+    
+    playBoilingSound() {
+        this.boilingSound.currentTime = 0;
+        this.boilingSound.play();
+    }
+    
+    stopBoilingSound() {
+        this.boilingSound.pause();
+        this.boilingSound.currentTime = 0;
     }
     
     resetAudio() {

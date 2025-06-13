@@ -64,6 +64,7 @@ export default class Gas extends Hint {
         this.hintImage.style.maxWidth = '100%';
         this.hintImage.style.maxHeight = '100%';
         this.hintImage.style.objectFit = 'contain';
+        this.hintImage.draggable = false;
         
         this.hintImage.addEventListener('click', () => this.nextStep());
 

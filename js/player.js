@@ -16,6 +16,8 @@ export default class Player {
         this.animationFrameId = null; // ID của requestAnimationFrame
         this.animationTimeout = null; // ID của setTimeout
         this.transitionEndHandler = null; // Handler cho sự kiện transitionend
+        this.footstepInterval = null; // interval cho sound bước chân
+        this.currentWalkFrame = 0;
         
         // Thiết lập vị trí ban đầu
         this.element.style.left = this.x + 'px';
@@ -220,18 +222,16 @@ export default class Player {
     }
     
     startAnimation() {
-        this.game.audioManager.startWalkLoop();
-        // Xóa tất cả class trước khi thêm mới
         this.element.classList.remove('moving-left', 'moving-right', 'walking-left', 'walking-right');
-        
         if (this.lastDirection === 'right') {
             this.element.classList.add('moving-right', 'walking-right');
-            // Chỉ thay đổi lớp animation, không thay đổi ảnh nền ngay lập tức
-            // Ảnh nền sẽ được thay đổi tự động trong keyframes
         } else {
             this.element.classList.add('moving-left', 'walking-left');
-            // Tương tự, không thay đổi ảnh nền ngay lập tức
         }
+        if (this.footstepInterval) clearInterval(this.footstepInterval);
+        this.footstepInterval = setInterval(() => {
+            this.game.audioManager.playWalkSound();
+        }, 1500); // 1 bước mỗi 0.5s, đúng nhịp 2 bước/chu kỳ 1s
     }
     
     updateCameraToPlayerPosition(playerX) {
@@ -252,7 +252,11 @@ export default class Player {
     stopAnimation() {
         // Xóa các class walking
         this.element.classList.remove('walking-left', 'walking-right');
-        
+        // Dừng interval bước chân
+        if (this.footstepInterval) {
+            clearInterval(this.footstepInterval);
+            this.footstepInterval = null;
+        }
         // Giữ class direction và set ảnh tĩnh theo hướng cuối cùng
         if (this.lastDirection === 'right') {
             this.element.style.backgroundImage = "url('assets/images/move/00.png')";

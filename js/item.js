@@ -7,6 +7,7 @@ export default class Item {
         this.width = config.width || 100;
         this.height = config.height || 100;
         this.image = config.image;
+        this.inventoryImage = config.inventoryImage;
         this.clickMessage = config.clickMessage || `Bạn đã nhặt ${this.name}`;
         this.description = config.description || this.clickMessage;
         this.isCollected = false;
@@ -125,20 +126,26 @@ export default class Item {
         });
 
         const container = document.createElement('div');
-        container.style.position = 'relative';
-        container.style.display = 'flex';
-        container.style.flexDirection = 'column';
-        container.style.alignItems = 'center';
-
-        // Áp dụng kích thước modal nếu được cấu hình
-        if (this.modalWidth) container.style.width = this.modalWidth + 'px';
-        if (this.modalHeight) container.style.height = this.modalHeight + 'px';
+        Object.assign(container.style, {
+            position: 'relative',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: this.modalWidth ? this.modalWidth + 'px' : 'auto',
+            height: this.modalHeight ? this.modalHeight + 'px' : 'auto',
+            padding: '20px'
+        });
 
         const img = document.createElement('img');
-        img.src = this.image;
-        img.style.maxWidth = '90%';
-        img.style.maxHeight = '90%';
-        img.style.objectFit = 'contain';
+        Object.assign(img.style, {
+            maxWidth: '90%',
+            maxHeight: '90%',
+            objectFit: 'contain',
+            margin: 'auto'
+        });
+        img.src = this.inventoryImage || this.image;
+        img.draggable = false;
         container.appendChild(img);
 
         // Description text cố định dưới màn
@@ -159,6 +166,9 @@ export default class Item {
         // Click on container to collect
         container.addEventListener('click', (e) => {
             e.stopPropagation();
+            // Play sound
+            const audio = new Audio('assets/audio/get-item.mp3');
+            audio.play();
             this.overlay.style.display = 'none';
             this.collect();
         });

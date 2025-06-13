@@ -67,6 +67,20 @@ export default class Map {
                     modalWidth: 600,
                     modalHeight: 400,
                     modalDescription: 'Một gói mì tôm thơm ngon.'
+                },
+                {
+                    id: 'to_mi',
+                    name: 'Tô mì',
+                    x: 5295,
+                    y: 1245,
+                    width: 174,
+                    height: 136,
+                    image: 'assets/images/items/tomi_map.png',
+                    inventoryImage: 'assets/images/items/tomi_inventory.png',
+                    clickMessage: 'Bạn đã nhặt được một tô mì.',
+                    modalWidth: 600,
+                    modalHeight: 400,
+                    modalDescription: 'Một tô mì trống để đựng mì.'
                 }
             ],
             hints: [
@@ -104,10 +118,10 @@ export default class Map {
                     id: 'thungda',
                     type: 'ThungDa',
                     name: 'Thùng đá',
-                    x: 3470,
-                    y: 1220,
-                    width: 830,
-                    height: 678,
+                    x: 3577,
+                    y: 1240,
+                    width: 585,
+                    height: 595,
                     image: 'assets/images/items/thungda/1.png'
                 },
                 {

@@ -69,8 +69,9 @@ class ResourcePreloader {
                 'assets/images/items/thungda/canuoc_item.png',
                 //mì
                 'assets/images/items/mi.png',
-                'assets/images/items/giavi1.png',
-                'assets/images/items/giavi2.png',
+                'assets/images/items/vatmi.PNG',
+                'assets/images/items/giavi1.PNG',
+                'assets/images/items/giavi2.PNG',
                 //noi
                 'assets/images/items/noi/1.png',
                 'assets/images/items/noi/2.png',

@@ -495,7 +495,7 @@ export default class Noi extends Hint {
 
         // Vắt mì (trên) và gói gia vị (dưới) nằm bên phải màn hình
         const vatMi = document.createElement('img');
-        vatMi.src = 'assets/images/items/vatmi.png';
+        vatMi.src = 'assets/images/items/vatmi.PNG';
         Object.assign(vatMi.style, {
             position: 'absolute',
             right: '5%',
@@ -514,7 +514,7 @@ export default class Noi extends Hint {
         });
 
         const giaVi = document.createElement('img');
-        giaVi.src = 'assets/images/items/giavi1.png';
+        giaVi.src = 'assets/images/items/giavi1.PNG';
         Object.assign(giaVi.style, {
             position: 'absolute',
             right: '5%',

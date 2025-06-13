@@ -95,7 +95,8 @@ export default class MayChu extends Hint {
             // Điều chỉnh vị trí nút dựa trên hình ảnh máy tính
             bottom: '20%',
             left: '49.8%',
-            zIndex: '2'
+            zIndex: '2',
+            hover: 'brightness(1.1)'
         });
         this.powerButton.draggable = false;
         this.powerButton.addEventListener('click', () => this.toggleComputer());
@@ -402,12 +403,14 @@ export default class MayChu extends Hint {
             computer.screen.style.backgroundColor = 'transparent';
             computer.screen.style.backgroundImage = "url('assets/images/items/maychu/background.jpg')";
             computer.btn.textContent = 'Turn Off';
+            if(i===3){ this.game.machine3Powered = true; }
         } else {
             computer.on = false;
             computer.statusDot.style.backgroundColor = 'red';
             computer.screen.style.backgroundColor = '#000';
             computer.screen.style.backgroundImage = 'none';
             computer.btn.textContent = 'Turn On';
+            if(i===3){ this.game.machine3Powered = false; }
         }
     }
 } 

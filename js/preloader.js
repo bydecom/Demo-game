@@ -3,6 +3,7 @@ class ResourcePreloader {
         // Danh sách tài nguyên cần tải
         this.resources = {
             images: [
+                'assets/images/move/00.png',
                 'assets/images/move/01.png',
                 'assets/images/move/02.png',
                 'assets/images/move/03.png',
@@ -22,11 +23,10 @@ class ResourcePreloader {
                 'assets/images/move/17.png',
                 'assets/images/move/18.png',
                 'assets/images/move/19.png',
-                'assets/images/move/00.png',
                 // Background và UI chính
-                'assets/images/background.jpg',
                 'assets/images/menu/menu.png',
                 'assets/images/menu/loading.png',
+                'assets/images/menu/credit.png',
                 'assets/images/items/balo.png',
                 'assets/images/items/noi/1.png',
                 'assets/images/items/mi.png',
@@ -39,7 +39,15 @@ class ResourcePreloader {
 
                 // Hint nồi
                 'assets/images/items/noi/1.png',
-                'assets/images/items/mi.png',
+                'assets/images/items/noi/2.png',
+                'assets/images/items/noi/3.png',
+                'assets/images/items/noi/4.png',
+                'assets/images/items/noi/5.png',
+                'assets/images/items/noi/6.png',
+                'assets/images/items/noi/7.png',
+                'assets/images/items/noi/8.png',
+                'assets/images/items/noi/9.png',
+
                 // Inventory & UI
                 'assets/images/items/slot.png',
                 // Setting UI buttons
@@ -82,25 +90,46 @@ class ResourcePreloader {
                 'assets/images/items/noi/6.png',
                 'assets/images/items/noi/7.png',
                 'assets/images/items/noi/8.png',
-
+                'assets/images/items/noi_map.png',
+                'assets/images/items/gas_button_on.png',
+                'assets/images/items/gas_button_off.png',
+                //nhật ký
+                'assets/images/items/nhatky/1.png',
+                'assets/images/items/nhatky/2.png',
+                'assets/images/items/nhatky/3.png',
+                'assets/images/items/nhatky/4.png',
+                'assets/images/items/nhatky/5.png',
+                'assets/images/items/nhatky/6.png',
+                'assets/images/items/nhatky/sach.png',
                 //gas
-                'assets/images/items/gas.png',
+                'assets/images/items/gas_item.png',
                 'assets/images/items/gas_hint1.png',
                 'assets/images/items/gas_hint2.png',
+                'assets/images/items/gas_hint3.png',
+                'assets/images/items/gas_hint4.png',
                 //tô mì
                 'assets/images/items/tomi_map.png',
-                'assets/images/items/tomi_inventory.png',
-
-                
+                'assets/images/items/tomi_inventory.png',    
+                'assets/images/items/tomi_done.png',
                 //npc
                 'assets/images/npc/1.png',
                 'assets/images/npc/2.png',
                 'assets/images/npc/3.png',
                 'assets/images/npc/4.png',
-                'assets/images/items/maychu/maychu.png',
+                //maychu
                 'assets/images/items/maychu/manhinhmaytinhtat.png',
                 'assets/images/items/maychu/manhinhmaytinhmo.png',
-                'assets/images/items/maychu/nutmaytinh.png'
+                'assets/images/items/maychu/nutmaytinh.png',
+                'assets/images/items/maychu/background.jpg',
+                'assets/images/items/maychu/icon.png',
+                'assets/images/items/maychu/maychu.png',
+                //may3
+                'assets/images/items/may3/maynguoichoimo.png',
+                'assets/images/items/may3/maynguoichoidong.png',
+                'assets/images/items/may3/background.jpg',
+                'assets/images/items/may3/icon.png',
+                'assets/images/items/may3/iconmay.png',
+                'assets/images/items/may3/ghetua.png',
                 
             ],
             audio: [

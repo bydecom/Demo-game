@@ -19,8 +19,51 @@ export default class SnakeGame {
         // Khởi tạo game
         this.reset();
         
-        // Bind sự kiện bàn phím
-        this.setupControls();
+        this.isDestroyed = false;
+        this.rafId = null;
+
+        // Bind key handler for removal later
+        this.keydownHandler = (e) => {
+            if (!this.gameStarted && !this.gameOver) {
+                this.gameStarted = true;
+                this.direction = { x: 1, y: 0 };
+                this.nextDirection = { x: 1, y: 0 };
+                return;
+            }
+
+            if (this.gameOver && e.code === 'Space') {
+                this.reset();
+                return;
+            }
+
+            switch (e.code) {
+                case 'ArrowUp':
+                case 'KeyW':
+                    if (this.direction.y === 0) {
+                        this.nextDirection = { x: 0, y: -1 };
+                    }
+                    break;
+                case 'ArrowDown':
+                case 'KeyS':
+                    if (this.direction.y === 0) {
+                        this.nextDirection = { x: 0, y: 1 };
+                    }
+                    break;
+                case 'ArrowLeft':
+                case 'KeyA':
+                    if (this.direction.x === 0) {
+                        this.nextDirection = { x: -1, y: 0 };
+                    }
+                    break;
+                case 'ArrowRight':
+                case 'KeyD':
+                    if (this.direction.x === 0) {
+                        this.nextDirection = { x: 1, y: 0 };
+                    }
+                    break;
+            }
+        };
+        document.addEventListener('keydown', this.keydownHandler);
         
         // Bắt đầu game loop
         this.gameLoop();
@@ -56,49 +99,6 @@ export default class SnakeGame {
                 y: Math.floor(Math.random() * this.tileCount.y)
             };
         } while (this.snake.some(segment => segment.x === this.food.x && segment.y === this.food.y));
-    }
-    
-    setupControls() {
-        document.addEventListener('keydown', (e) => {
-            if (!this.gameStarted && !this.gameOver) {
-                this.gameStarted = true;
-                this.direction = { x: 1, y: 0 };
-                this.nextDirection = { x: 1, y: 0 };
-                return;
-            }
-            
-            if (this.gameOver && e.code === 'Space') {
-                this.reset();
-                return;
-            }
-            
-            switch (e.code) {
-                case 'ArrowUp':
-                case 'KeyW':
-                    if (this.direction.y === 0) {
-                        this.nextDirection = { x: 0, y: -1 };
-                    }
-                    break;
-                case 'ArrowDown':
-                case 'KeyS':
-                    if (this.direction.y === 0) {
-                        this.nextDirection = { x: 0, y: 1 };
-                    }
-                    break;
-                case 'ArrowLeft':
-                case 'KeyA':
-                    if (this.direction.x === 0) {
-                        this.nextDirection = { x: -1, y: 0 };
-                    }
-                    break;
-                case 'ArrowRight':
-                case 'KeyD':
-                    if (this.direction.x === 0) {
-                        this.nextDirection = { x: 1, y: 0 };
-                    }
-                    break;
-            }
-        });
     }
     
     update() {
@@ -213,17 +213,19 @@ export default class SnakeGame {
     }
     
     gameLoop(currentTime = 0) {
+        if (this.isDestroyed) return; // stop if destroyed
         if (currentTime - this.lastTime >= this.gameSpeed) {
             this.update();
             this.draw();
             this.lastTime = currentTime;
         }
         
-        requestAnimationFrame((time) => this.gameLoop(time));
+        this.rafId = requestAnimationFrame((time) => this.gameLoop(time));
     }
     
     destroy() {
-        // Cleanup nếu cần
-        this.gameOver = true;
+        this.isDestroyed = true;
+        if (this.rafId) cancelAnimationFrame(this.rafId);
+        document.removeEventListener('keydown', this.keydownHandler);
     }
 } 

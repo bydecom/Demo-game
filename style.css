@@ -731,4 +731,14 @@ body {
     color: white;
     font-size: 24px;
     text-align: center;
+}
+
+/* Force custom cursor even when inline style sets pointer */
+[style*="cursor: pointer"] {
+    cursor: url('assets/images/chuot32x32.png'), auto !important;
+}
+
+/* Đảm bảo con trỏ tùy chỉnh cho tất cả button và liên kết */
+button, a, [role="button"] {
+    cursor: url('assets/images/chuot32x32.png'), auto !important;
 } 

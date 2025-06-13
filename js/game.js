@@ -55,6 +55,9 @@ export default class Game {
         // Quản lý hành động chờ xử lý (ví dụ chờ nhân vật đi tới mục tiêu rồi mở modal)
         this.pendingWaiter = null;
 
+        // trạng thái máy tính 3
+        this.machine3Powered = false;
+
         // Khởi tạo game với nhật ký
         this.initializeGame();
     }

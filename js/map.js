@@ -4,6 +4,7 @@ import Noi from './hints/noi.js';
 import Item from './item.js';
 import NPC from './hints/npc.js';
 import MayChu from './hints/maychu.js';
+import MayTinh from './hints/maytinh.js';
 
 export default class Map {
     constructor(id, game) {
@@ -142,10 +143,25 @@ export default class Map {
                     frameInterval: 300
                 },
                 {
+                    id: 'maytinh_may3',
+                    type: 'MayTinh',
+                    name: 'Máy tính số 3',
+                    x: 1295,
+                    y: 955,
+                    width: 502,
+                    height: 387,
+                    image: 'assets/images/items/may3/iconmay.png',
+                    frontImage: 'assets/images/items/may3/ghetua.png',
+                    frontOffsetX: 171,
+                    frontOffsetY: 249,
+                    frontWidth: 344,
+                    frontHeight: 739
+                },
+                {
                     id: 'maychu',
                     type: 'MayChu',
                     name: 'Máy chủ',
-                    x: 5924,
+                    x: 5923,
                     y: 820,
                     width: 447,
                     height: 369,
@@ -219,6 +235,13 @@ export default class Map {
                     case 'NPC':
                     case 'npc':
                         hint = new NPC({
+                            ...hintData,
+                            game: this.game
+                        });
+                        break;
+                    case 'MayTinh':
+                    case 'maytinh':
+                        hint = new MayTinh({
                             ...hintData,
                             game: this.game
                         });

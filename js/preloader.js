@@ -101,6 +101,7 @@ class ResourcePreloader {
                 'assets/images/items/maychu/manhinhmaytinhtat.png',
                 'assets/images/items/maychu/manhinhmaytinhmo.png',
                 'assets/images/items/maychu/nutmaytinh.png'
+                
             ],
             audio: [
                 'assets/audio/background-music.mp3',

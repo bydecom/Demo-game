@@ -123,6 +123,126 @@ export default class MayChu extends Hint {
             display: 'block'
         });
 
+        // Desktop screen (ẩn ban đầu)
+        this.desktopScreen = document.createElement('div');
+        Object.assign(this.desktopScreen.style, {
+            width: '100%',
+            height: '100%',
+            backgroundImage: "url('assets/images/items/maychu/background.jpg')",
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+            display: 'none',
+            position: 'relative'
+        });
+
+        // Icon trên desktop
+        const desktopIcon = document.createElement('img');
+        desktopIcon.src = 'assets/images/items/maychu/icon.png';
+        Object.assign(desktopIcon.style, {
+            position: 'absolute',
+            top: '10%',
+            left: '5%',
+            width: '60px',
+            height: '60px',
+            objectFit: 'contain',
+            cursor: 'pointer'
+        });
+        desktopIcon.addEventListener('click', () => this.onDesktopIconClick());
+
+        this.desktopScreen.appendChild(desktopIcon);
+
+        // -------- Manager screen (ẩn ban đầu) ---------
+        this.managerScreen = document.createElement('div');
+        Object.assign(this.managerScreen.style, {
+            position: 'absolute',
+            top: '5%',
+            left: '5%',
+            width: '90%',
+            height: '90%',
+            backgroundColor: 'rgba(236,233,216,0.95)', // giống màu XP
+            border: '2px solid #000',
+            display: 'none',
+            padding: '20px',
+            boxSizing: 'border-box'
+        });
+
+        // Title bar for manager
+        const mgrTitle = document.createElement('div');
+        mgrTitle.textContent = 'Trình quản lý máy chủ';
+        Object.assign(mgrTitle.style, {
+            fontWeight: 'bold',
+            fontSize: '18px',
+            marginBottom: '10px'
+        });
+        this.managerScreen.appendChild(mgrTitle);
+
+        // Grid container for 4 computers
+        const grid = document.createElement('div');
+        Object.assign(grid.style, {
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr',
+            gridTemplateRows: '1fr 1fr',
+            gap: '12px',
+            width: '100%',
+            height: 'calc(100% - 30px)'
+        });
+
+        this.computerStates = [];
+        for (let i = 1; i <= 4; i++) {
+            // wrapper
+            const cell = document.createElement('div');
+            Object.assign(cell.style, {
+                backgroundColor: '#f1f1f1',
+                border: '2px solid #ccc',
+                position: 'relative',
+                padding: '6px',
+                boxSizing: 'border-box',
+                display: 'flex',
+                flexDirection: 'column',
+                fontSize: '12px'
+            });
+
+            // header
+            const header = document.createElement('div');
+            header.textContent = `Computer ${i}`;
+            Object.assign(header.style, { fontWeight: 'bold', marginBottom: '4px', fontSize:'14px' });
+
+            const statusDot = document.createElement('span');
+            Object.assign(statusDot.style, {
+                width: '10px', height: '10px', borderRadius: '50%', backgroundColor: 'red', display: 'inline-block', marginLeft: '8px'
+            });
+            header.appendChild(statusDot);
+
+            // screen div
+            const screen = document.createElement('div');
+            Object.assign(screen.style, {
+                flex: '1',
+                backgroundColor: '#000',
+                backgroundImage: 'none',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                border: '1px solid #666'
+            });
+
+            // button
+            const btn = document.createElement('button');
+            btn.textContent = 'Turn On';
+            Object.assign(btn.style, { marginTop: '4px', alignSelf: 'flex-end', fontSize:'12px', padding:'2px 10px' });
+
+            btn.addEventListener('click', () => this.toggleComputerState(i));
+
+            cell.appendChild(header);
+            cell.appendChild(screen);
+            cell.appendChild(btn);
+            grid.appendChild(cell);
+
+            this.computerStates[i] = { on: false, screen, statusDot, btn };
+        }
+
+        this.managerScreen.appendChild(grid);
+        this.desktopScreen.appendChild(this.managerScreen);
+        this.passwordContainer.appendChild(this.desktopScreen);
+
         // Message label với class CSS chung
         this.messageLabel = document.createElement('div');
         this.messageLabel.className = 'modal-description-label';
@@ -205,21 +325,21 @@ export default class MayChu extends Hint {
     // Password unlock callback
     /* -------------------------------------------------------------- */
     onPasswordUnlock() {
-        this.messageLabel.textContent = 'Đăng nhập thành công! Hệ thống đã sẵn sàng.';
+        this.messageLabel.textContent = 'Đăng nhập thành công!';
+        
+        // Ẩn canvas nhập mật khẩu, hiển thị desktop
+        this.passwordCanvas.style.display = 'none';
+        if (this.desktopScreen) {
+            this.desktopScreen.style.display = 'block';
+        }
         
         // Phát âm thanh thành công
         if (this.game.audioManager) {
             this.game.audioManager.playItemSound();
         }
         
-        // TODO: Thêm các chức năng khác sau khi đăng nhập thành công
-        console.log('Hệ thống máy chủ đã được mở khóa!');
-        
-        // Có thể ẩn màn hình mật khẩu và hiển thị desktop hoặc ứng dụng khác
-        setTimeout(() => {
-            this.passwordContainer.style.display = 'none';
-            this.messageLabel.textContent = 'Hệ thống đã sẵn sàng sử dụng.';
-        }, 2000);
+        // Cập nhật label
+        this.messageLabel.textContent = 'Hệ thống đã sẵn sàng sử dụng.';
     }
 
     /* -------------------------------------------------------------- */
@@ -258,6 +378,36 @@ export default class MayChu extends Hint {
                 this.passwordScreen.destroy();
                 this.passwordScreen = null;
             }
+        }
+    }
+
+    /* -------------------------------------------------------------- */
+    // Desktop icon click (placeholder for next event)
+    /* -------------------------------------------------------------- */
+    onDesktopIconClick() {
+        // Ẩn icon và hiển thị managerScreen
+        if (this.desktopScreen) {
+            const icon = this.desktopScreen.querySelector('img');
+            if (icon) icon.style.display = 'none';
+            this.managerScreen.style.display = 'block';
+        }
+        this.messageLabel.textContent = 'Quản lý máy chủ';
+    }
+
+    toggleComputerState(i) {
+        const computer = this.computerStates[i];
+        if (!computer.on) {
+            computer.on = true;
+            computer.statusDot.style.backgroundColor = 'green';
+            computer.screen.style.backgroundColor = 'transparent';
+            computer.screen.style.backgroundImage = "url('assets/images/items/maychu/background.jpg')";
+            computer.btn.textContent = 'Turn Off';
+        } else {
+            computer.on = false;
+            computer.statusDot.style.backgroundColor = 'red';
+            computer.screen.style.backgroundColor = '#000';
+            computer.screen.style.backgroundImage = 'none';
+            computer.btn.textContent = 'Turn On';
         }
     }
 } 

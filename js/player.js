@@ -26,8 +26,8 @@ export default class Player {
         // Khởi tạo animation mặc định
         this.element.style.backgroundImage = "url('assets/images/move2/1.png')";
         
-        // Xử lý điều khiển bàn phím
-        this.initKeyboardControls();
+        // Bỏ điều khiển bàn phím
+        // this.initKeyboardControls();
     }
     
     initKeyboardControls() {

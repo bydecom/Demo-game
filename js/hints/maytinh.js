@@ -6,6 +6,16 @@ export default class MayTinh extends Hint {
         super(config);
         this.modalCreated = false;
         this.snakeGame = null;
+        // Front overlay image (optional)
+        this.frontImage = config.frontImage;
+        this.frontOffsetX = config.frontOffsetX || 0;
+        this.frontOffsetY = config.frontOffsetY || 0;
+        this.frontWidth = config.frontWidth || this.width;
+        this.frontHeight = config.frontHeight || this.height;
+
+        if (this.frontImage) {
+            this.createFrontOverlay();
+        }
     }
 
     /* -------------------------------------------------------------- */
@@ -167,5 +177,22 @@ export default class MayTinh extends Hint {
                 this.snakeGame = null;
             }
         }
+    }
+
+    createFrontOverlay() {
+        this.frontElement = document.createElement('div');
+        Object.assign(this.frontElement.style, {
+            position:'absolute',
+            left:`${this.x + this.frontOffsetX}px`,
+            top:`${this.y + this.frontOffsetY}px`,
+            width:`${this.frontWidth}px`,
+            height:`${this.frontHeight}px`,
+            backgroundImage:`url('${this.frontImage}')`,
+            backgroundSize:'contain',
+            backgroundRepeat:'no-repeat',
+            pointerEvents:'none',
+            zIndex:'2'
+        });
+        this.game.gameContainer.appendChild(this.frontElement);
     }
 } 

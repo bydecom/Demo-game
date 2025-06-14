@@ -282,24 +282,7 @@ export default class MayChu extends Hint {
             this.passwordContainer.style.display = 'block';
             
             // Khởi tạo màn hình nhập mật khẩu
-            if (!this.passwordScreen) {
-                // Tính toán kích thước canvas dựa trên container
-                const containerRect = this.passwordContainer.getBoundingClientRect();
-                const width = Math.floor(containerRect.width * 0.9);
-                const height = Math.floor(containerRect.height * 0.9);
-                
-                this.passwordScreen = new MatKhau(this.passwordCanvas, width, height);
-                
-                // Callback khi nhập đúng mật khẩu
-                this.passwordScreen.setOnUnlock(() => {
-                    this.onPasswordUnlock();
-                });
-
-                // Callback khi nhập sai mật khẩu
-                this.passwordScreen.setOnError(() => {
-                    this.messageLabel.textContent = 'Sai mật khẩu! Thử lại.';
-                });
-            }
+            this.initPasswordScreen();
             
             // Phát âm thanh khởi động
             if (this.game.audioManager) {
@@ -320,6 +303,29 @@ export default class MayChu extends Hint {
                 this.passwordScreen = null;
             }
         }
+    }
+
+    /* -------------------------------------------------------------- */
+    // Helper to (re)create password screen
+    /* -------------------------------------------------------------- */
+    initPasswordScreen() {
+        if (this.passwordScreen) return;
+        // Tính toán kích thước canvas dựa trên container
+        const containerRect = this.passwordContainer.getBoundingClientRect();
+        const width = Math.floor(containerRect.width * 0.9);
+        const height = Math.floor(containerRect.height * 0.9);
+
+        this.passwordScreen = new MatKhau(this.passwordCanvas, width, height);
+
+        // Callback khi nhập đúng mật khẩu
+        this.passwordScreen.setOnUnlock(() => {
+            this.onPasswordUnlock();
+        });
+
+        // Callback khi nhập sai mật khẩu
+        this.passwordScreen.setOnError(() => {
+            this.messageLabel.textContent = 'Sai mật khẩu! Thử lại.';
+        });
     }
 
     /* -------------------------------------------------------------- */
@@ -356,6 +362,15 @@ export default class MayChu extends Hint {
                 this.powerButton.style.display = 'none';
                 this.passwordContainer.style.display = 'block';
                 
+                if (!this.passwordScreen) {
+                    this.initPasswordScreen();
+                    // Đảm bảo hiển thị đúng thành phần UI
+                    this.passwordCanvas.style.display = 'block';
+                    if (this.desktopScreen) {
+                        this.desktopScreen.style.display = 'none';
+                    }
+                }
+                
                 if (this.passwordScreen && this.passwordScreen.isUnlocked) {
                     this.messageLabel.textContent = 'Hệ thống đã sẵn sàng sử dụng.';
                 } else {
@@ -374,11 +389,9 @@ export default class MayChu extends Hint {
         if (this.overlay) {
             this.overlay.style.display = 'none';
             
-            // Dọn dẹp màn hình mật khẩu khi đóng modal
-            if (this.passwordScreen) {
-                this.passwordScreen.destroy();
-                this.passwordScreen = null;
-            }
+            // Giữ lại passwordScreen để người chơi có thể tiếp tục nhập sau khi mở lại
+            // Nếu muốn giải phóng tài nguyên hoàn toàn, hãy tắt máy tính (toggleComputer) thay vì chỉ đóng modal.
+            // (Đoạn mã cũ đã huỷ passwordScreen ở đây đã được loại bỏ.)
         }
     }
 

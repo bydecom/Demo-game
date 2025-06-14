@@ -31,6 +31,9 @@ export default class Hint {
         this.element.addEventListener('click', (e) => {
             // Ngăn chặn sự kiện click tiếp tục lan truyền
             e.stopPropagation();
+
+            // Bỏ qua click nếu nhân vật đang di chuyển để tránh mở modal sớm
+            if (this.game.player.isMoving) return;
             this.onClick();
         });
 

@@ -79,7 +79,8 @@ export default class MayTinh extends Hint {
             maxWidth: '600px',      /* giới hạn tối đa */
             maxHeight: '600px',
             height: 'auto',
-            marginBottom: '40px'
+            marginBottom: '40px',
+            marginLeft: '75px'
         });
 
         // Image of computer (màn hình ngoài)

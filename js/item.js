@@ -29,6 +29,9 @@ export default class Item {
         this.element.addEventListener('click', (e) => {
             e.stopPropagation();
 
+            // Nếu nhân vật đang di chuyển thì bỏ qua click để tránh mở modal sớm
+            if (this.game.player.isMoving) return;
+
             // Tính vị trí trung tâm item
             const targetX = this.x + this.width / 2;
             const distance = Math.abs(this.game.player.x - targetX);

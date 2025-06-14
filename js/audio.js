@@ -37,7 +37,7 @@ export default class AudioManager {
         // Bắt đầu phát nhạc khi người dùng tương tác
         document.addEventListener('click', () => {
             if (this.bgMusic.paused) {
-                this.bgMusic.play();
+                this.bgMusic.play().catch(()=>{});
             }
         }, { once: true });
     }
@@ -76,17 +76,17 @@ export default class AudioManager {
     
     playItemSound() {
         this.itemSound.currentTime = 0;
-        this.itemSound.play();
+        this.itemSound.play().catch(()=>{});
     }
     
     playBookSound() {
         this.bookSound.currentTime = 0;
-        this.bookSound.play();
+        this.bookSound.play().catch(()=>{});
     }
     
     playBoilingSound() {
         this.boilingSound.currentTime = 0;
-        this.boilingSound.play();
+        this.boilingSound.play().catch(()=>{});
     }
     
     stopBoilingSound() {
@@ -109,7 +109,7 @@ export default class AudioManager {
     startWalkLoop() {
         if (this.walkSound.paused && !this.isMuted) {
             this.walkSound.currentTime = 0;
-            this.walkSound.play();
+            this.walkSound.play().catch(()=>{});
         }
     }
     

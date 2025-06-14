@@ -64,6 +64,7 @@ class ResourcePreloader {
                 'assets/images/items/nhatky/4.png',
                 'assets/images/items/nhatky/5.png',
                 'assets/images/items/nhatky/6.png',
+                'assets/images/items/nhatky/7.png',
                 // Gas hint steps (1-4)
                 'assets/images/items/gas_hint1.png',
                 'assets/images/items/gas_hint2.png',
@@ -137,7 +138,8 @@ class ResourcePreloader {
                 'assets/audio/footstep.mp3',
                 'assets/audio/get-item.mp3',
                 'assets/audio/boiling-water.mp3',
-
+                'assets/audio/heartbeat.mp3',
+                'assets/audio/book_sound.mp3',
             ]
         };
 

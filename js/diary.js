@@ -4,6 +4,7 @@ export default class Diary {
         this.currentPage = 1;
         this.maxPages = 6;
         this.isOpen = false;
+        this.customPages = {}; // lưu mapping pageNumber->custom image
         this.createDiaryUI();
     }
 
@@ -33,7 +34,7 @@ export default class Diary {
 
         // Tạo nút đóng
         const closeButton = document.createElement('button');
-        closeButton.className = 'diary-close-button';
+        closeButton.className = 'modal-close-btn';
         closeButton.style.backgroundImage = "url('assets/images/button/exit.png')";
         closeButton.style.backgroundSize = 'contain';
         closeButton.style.backgroundPosition = 'center';
@@ -104,7 +105,10 @@ export default class Diary {
         }
         
         this.currentPage = pageNumber;
-        this.pageElement.style.backgroundImage = `url('assets/images/items/nhatky/${pageNumber}.png')`;
+        const src = this.customPages[pageNumber] || `assets/images/items/nhatky/${pageNumber}.png`;
+        this.pageElement.style.backgroundImage = `url('${src}')`;
+        this.pageElement.style.backgroundSize = 'contain';
+        this.pageElement.style.backgroundPosition = 'center';
     }
 
     nextPage() {
@@ -121,5 +125,95 @@ export default class Diary {
             // Chỉ phát book-sound, không phát get-item
             // this.game.audioManager.playItemSound();
         }
+    }
+
+    /* -------------------------------------------------------------- */
+    // Hiệu ứng lật trang đặc biệt: hiện trang oldPage rồi từ từ overlay newPage
+    /* -------------------------------------------------------------- */
+    revealNewPage(oldPageNumber, newPageNumber, fadeTime = 2000) {
+        // Bảo vệ tham số
+        if (oldPageNumber < 1 || newPageNumber < 1 || newPageNumber > this.maxPages) {
+            return;
+        }
+
+        // Đảm bảo diary đang mở
+        if (!this.isOpen) {
+            this.openDiary();
+        }
+
+        // Hiển thị trang cũ
+        this.showPage(oldPageNumber);
+
+        // Tạo overlay trang mới
+        const overlay = document.createElement('div');
+        Object.assign(overlay.style, {
+            position: 'absolute',
+            top: '0',
+            left: '0',
+            width: '100%',
+            height: '100%',
+            backgroundImage: `url('assets/images/items/nhatky/${newPageNumber}.png')`,
+            backgroundSize: 'contain',
+            backgroundPosition: 'center',
+            opacity: '0',
+            transition: `opacity ${fadeTime}ms ease-in-out`,
+            pointerEvents: 'none'
+        });
+
+        // Bảo đảm pageElement là relative
+        this.pageElement.style.position = 'relative';
+        this.pageElement.appendChild(overlay);
+
+        // Trigger fade
+        setTimeout(() => {
+            overlay.style.opacity = '1';
+        }, 50);
+
+        // Sau khi hoàn tất, đặt currentPage và xoá overlay cho sạch
+        setTimeout(() => {
+            this.currentPage = newPageNumber;
+            // đặt background chính thành trang mới
+            this.pageElement.style.backgroundImage = `url('assets/images/items/nhatky/${newPageNumber}.png')`;
+            if (overlay && overlay.parentNode) overlay.parentNode.removeChild(overlay);
+        }, fadeTime + 100);
+    }
+
+    /* -------------------------------------------------------------- */
+    // Thay thế hình ảnh của pageNumber bằng newImageSrc với hiệu ứng fade
+    /* -------------------------------------------------------------- */
+    replacePageImage(pageNumber, newImageSrc, fadeTime = 2000) {
+        if (pageNumber < 1 || pageNumber > this.maxPages) return;
+
+        if (!this.isOpen) this.openDiary();
+
+        // Hiển thị trang hiện tại (giữ nguyên pageNumber)
+        this.showPage(pageNumber);
+
+        // Overlay ảnh mới
+        const overlay = document.createElement('div');
+        Object.assign(overlay.style, {
+            position: 'absolute',
+            top: '0',
+            left: '0',
+            width: '100%',
+            height: '100%',
+            backgroundImage: `url('${newImageSrc}')`,
+            backgroundSize: 'contain',
+            backgroundRepeat: 'no-repeat',
+            backgroundPosition: 'center',
+            opacity: '0',
+            transition: `opacity ${fadeTime}ms ease-in-out`,
+            pointerEvents: 'none'
+        });
+        this.pageElement.style.position = 'relative';
+        this.pageElement.appendChild(overlay);
+
+        setTimeout(()=>{ overlay.style.opacity='1'; },50);
+
+        setTimeout(()=>{
+            this.customPages[pageNumber] = newImageSrc;
+            this.pageElement.style.backgroundImage = `url('${newImageSrc}')`;
+            if(overlay.parentNode) overlay.parentNode.removeChild(overlay);
+        }, fadeTime+100);
     }
 } 

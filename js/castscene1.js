@@ -162,5 +162,13 @@ export default class CastScene1 {
         if (this.closeBtn && this.closeBtn.parentNode) {
             this.closeBtn.parentNode.removeChild(this.closeBtn);
         }
+
+        // Đánh dấu cutscene 1 đã hoàn thành và hiện Tờ giấy
+        if(this.game){
+            this.game.castScene1Finished = true;
+            if(this.game.map && typeof this.game.map.showHintById === 'function'){
+                this.game.map.showHintById('togiay');
+            }
+        }
     }
 } 

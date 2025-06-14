@@ -112,6 +112,13 @@ class ResourcePreloader {
                 'assets/images/items/tomi_map.png',
                 'assets/images/items/tomi_inventory.png',    
                 'assets/images/items/tomi_done.png',
+                // tờ giấy
+                'assets/images/items/togiay/togiay_map.png',
+                'assets/images/items/togiay/togiay_noidung.png',
+                //thùng bí mật
+                'assets/images/items/thungbimat/thungbimat_map.png',
+                'assets/images/items/thungbimat/thungbimat_noidung.png',
+
                 //npc
                 'assets/images/npc/1.png',
                 'assets/images/npc/2.png',

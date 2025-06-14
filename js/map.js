@@ -5,6 +5,9 @@ import Item from './item.js';
 import NPC from './hints/npc.js';
 import MayChu from './hints/maychu.js';
 import MayTinh from './hints/maytinh.js';
+import ToGiay from './hints/togiay.js';
+import ThungGiay from './hints/thunggiay.js';
+import ChuTiem from './hints/chutiem.js';
 
 export default class Map {
     constructor(id, game) {
@@ -127,8 +130,18 @@ export default class Map {
                     image: 'assets/images/items/thungda/1.png'
                 },
                 {
+                    id: 'thunggiay',
+                    type: 'ThungGiay',
+                    name: 'Thùng giấy',
+                    x: 3145,
+                    y: 1208,
+                    width: 424,
+                    height: 215,
+                    image: 'assets/images/items/hopmatma/thungcarton.png'
+                },
+                {
                     id: 'chutiem',
-                    type: 'NPC',
+                    type: 'ChuTiem',
                     name: 'Chủ Tiệm',
                     x: 6500,
                     y: 850,
@@ -166,6 +179,16 @@ export default class Map {
                     width: 447,
                     height: 369,
                     image: 'assets/images/items/maychu/maychu.png'
+                },
+                {
+                    id: 'togiay',
+                    type: 'ToGiay',
+                    name: 'Tờ giấy',
+                    x: 1200,
+                    y: 1800,
+                    width: 120,
+                    height: 80,
+                    image: 'assets/images/items/togiay/togiay_map.png'
                 }
             ]
         };
@@ -232,6 +255,13 @@ export default class Map {
                             game: this.game
                         });
                         break;
+                    case 'ChuTiem':
+                    case 'chutiem':
+                        hint = new ChuTiem({
+                            ...hintData,
+                            game: this.game
+                        });
+                        break;
                     case 'NPC':
                     case 'npc':
                         hint = new NPC({
@@ -249,6 +279,24 @@ export default class Map {
                     case 'MayChu':
                     case 'maychu':
                         hint = new MayChu({
+                            ...hintData,
+                            game: this.game
+                        });
+                        break;
+                    case 'ToGiay':
+                    case 'togiay':
+                        hint = new ToGiay({
+                            ...hintData,
+                            game: this.game
+                        });
+                        // Ẩn tờ giấy cho tới khi cutscene 1 hoàn tất
+                        if(!this.game.castScene1Finished){
+                            hint.hide();
+                        }
+                        break;
+                    case 'ThungGiay':
+                    case 'thunggiay':
+                        hint = new ThungGiay({
                             ...hintData,
                             game: this.game
                         });
@@ -324,5 +372,13 @@ export default class Map {
     
     getMessages() {
         return this.mapData.messages;
+    }
+
+    // Hiện hint theo id (sau khi được mở khoá)
+    showHintById(hintId){
+        const hint = this.hints.find(h=>h.id === hintId);
+        if(hint){
+            hint.unhide();
+        }
     }
 } 

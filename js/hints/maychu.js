@@ -271,6 +271,12 @@ export default class MayChu extends Hint {
     // Computer toggle function
     /* -------------------------------------------------------------- */
     toggleComputer() {
+        if (!this.game.noodleDelivered) {
+            if (this.messageLabel) {
+                this.messageLabel.textContent = 'Chủ tiệm chưa cho phép bạn sử dụng máy chủ. Có vẻ ông ấy cấu gắt vì đói bụng!';
+            }
+            return;
+        }
         if (!this.computerOpened) {
             // Mở máy tính - hiển thị màn hình nhập mật khẩu
             this.computerOpened = true;

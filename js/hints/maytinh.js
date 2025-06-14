@@ -341,7 +341,7 @@ export default class MayTinh extends Hint {
                 // Nếu dưới ngưỡng, giảm âm lượng
                 if (score < 80) this._updateHeartbeatVolume(0);
             }
-            if (score >= 150) {
+            if (score >= 10) {
                 // Bắt đầu cảnh cast scene
                 this.castSceneStarted = true;
                 this.castSceneStartTime = Date.now();

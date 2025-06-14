@@ -34,6 +34,12 @@ export default class Game {
         // Khởi tạo diary
         this.diary = new Diary(this);
         
+        // Cờ kiểm soát cutscene 1 hoàn tất
+        this.castScene1Finished = false;
+        
+        // Cờ đã giao tô mì cho chủ tiệm
+        this.noodleDelivered = false;
+        
         // Thiết lập scale ban đầu
         this.gameContainer.style.transformOrigin = 'left top';
         this.gameContainer.style.transform = `scale(${this.scale})`;
@@ -78,7 +84,12 @@ export default class Game {
             // Kiểm tra xem click có trúng vào item không
             const clickX = (event.clientX / this.scale) + this.currentScrollX;
             this.player.moveToPosition(clickX);
-            this.audioManager.playWalkSound();
+            // Phát bước chân chỉ khi nhân vật thực sự di chuyển
+            if(this.player.isMoving){
+                this.audioManager.playWalkSound();
+            } else {
+                this.audioManager.stopWalkLoop();
+            }
         };
 
         // Ngăn chặn các sự kiện drag/drop mặc định toàn cục
@@ -110,6 +121,7 @@ export default class Game {
                     if (currentElement.classList.contains('hint-overlay') || 
                         currentElement.classList.contains('hint-container') ||
                         currentElement.classList.contains('inventory') ||
+                        currentElement.classList.contains('drop-target') ||
                         currentElement.id === 'game-container' ||
                         currentElement.id === 'game-wrapper') {
                         return true; // Cho phép drop

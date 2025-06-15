@@ -99,7 +99,9 @@ export default class MayChu extends Hint {
             hover: 'brightness(1.1)'
         });
         this.powerButton.draggable = false;
-        this.powerButton.addEventListener('click', () => this.toggleComputer());
+        this.powerButton.addEventListener('click', () => {
+            this.toggleComputer();
+        });
 
         // Password screen container (giống canvas container trong maytinh.js)
         this.passwordContainer = document.createElement('div');
@@ -148,7 +150,9 @@ export default class MayChu extends Hint {
             objectFit: 'contain',
             cursor: 'pointer'
         });
-        desktopIcon.addEventListener('click', () => this.onDesktopIconClick());
+        desktopIcon.addEventListener('click', () => {
+            this.onDesktopIconClick();
+        });
 
         this.desktopScreen.appendChild(desktopIcon);
 
@@ -230,7 +234,9 @@ export default class MayChu extends Hint {
             btn.textContent = 'Turn On';
             Object.assign(btn.style, { marginTop: '4px', alignSelf: 'flex-end', fontSize:'12px', padding:'2px 10px' });
 
-            btn.addEventListener('click', () => this.toggleComputerState(i));
+            btn.addEventListener('click', () => {
+                this.toggleComputerState(i);
+            });
 
             cell.appendChild(header);
             cell.appendChild(screen);
@@ -252,7 +258,9 @@ export default class MayChu extends Hint {
         // Close button
         const closeBtn = document.createElement('button');
         closeBtn.className = 'modal-close-btn';
-        closeBtn.addEventListener('click', () => this.hideModal());
+        closeBtn.addEventListener('click', () => {
+            this.hideModal();
+        });
 
         // Assemble
         this.passwordContainer.appendChild(this.passwordCanvas);
@@ -265,6 +273,11 @@ export default class MayChu extends Hint {
         document.body.appendChild(this.overlay);
 
         this.modalCreated = true;
+
+        // Play click sound only when user interacts inside the monitor area
+        this.passwordContainer.addEventListener('click', () => {
+            this.game.audioManager.playClickSound();
+        });
     }
 
     /* -------------------------------------------------------------- */

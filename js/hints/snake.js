@@ -1,9 +1,14 @@
 export default class SnakeGame {
-    constructor(canvas, width = 500, height = 500) {
+    constructor(canvas, width = 500, height = 500, audioManager = null) {
         this.canvas = canvas;
         this.ctx = canvas.getContext('2d');
         this.width = width;
         this.height = height;
+        this.audioManager = audioManager;
+        // Play snake background theme when game starts
+        if (this.audioManager) {
+            this.audioManager.playSnakeTheme();
+        }
         
         // Kích thước viền bao (margin) – vùng chơi thực sẽ nằm bên trong
         this.margin = 40; // px
@@ -40,6 +45,7 @@ export default class SnakeGame {
                 this.gameStarted = true;
                 this.direction = { x: 1, y: 0 };
                 this.nextDirection = { x: 1, y: 0 };
+                if (this.audioManager) this.audioManager.playSnakeTheme();
                 return;
             }
 
@@ -127,13 +133,25 @@ export default class SnakeGame {
         // FIX: Kiểm tra va chạm với tường - sử dụng tileCount chính xác
         if (head.x < 0 || head.x >= this.tileCount.x || 
             head.y < 0 || head.y >= this.tileCount.y) {
-            this.gameOver = true;
+            if (!this.gameOver) {
+                this.gameOver = true;
+                if (this.audioManager) {
+                    this.audioManager.playGameoverSound();
+                    this.audioManager.stopSnakeTheme();
+                }
+            }
             return;
         }
         
         // Kiểm tra va chạm với thân rắn
         if (this.snake.some(segment => segment.x === head.x && segment.y === head.y)) {
-            this.gameOver = true;
+            if (!this.gameOver) {
+                this.gameOver = true;
+                if (this.audioManager) {
+                    this.audioManager.playGameoverSound();
+                    this.audioManager.stopSnakeTheme();
+                }
+            }
             return;
         }
         
@@ -143,6 +161,7 @@ export default class SnakeGame {
         if (head.x === this.food.x && head.y === this.food.y) {
             this.score += 10;
             this.generateFood();
+            if (this.audioManager) this.audioManager.playFoodSound();
             
             // Tăng tốc độ game một chút
             if (this.gameSpeed > 80) {
@@ -264,6 +283,7 @@ export default class SnakeGame {
     
     destroy() {
         this.isDestroyed = true;
+        if (this.audioManager) this.audioManager.stopSnakeTheme();
         if (this.rafId) cancelAnimationFrame(this.rafId);
         document.removeEventListener('keydown', this.keydownHandler);
     }

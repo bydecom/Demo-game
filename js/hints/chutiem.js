@@ -6,9 +6,9 @@ export default class ChuTiem extends NPC {
 
         // Chuỗi hội thoại; có thể truyền qua config.dialogues
         this.dialogues = config.dialogues || [
-            'Xin chào! Cần mua gì không?',
-            'Ở đây ta bán đủ thứ để sống sót đấy!',
-            'Hãy quay lại khi con có tiền nhé!'
+            'Xin chào!',
+            'Ta đói bụng quá!',
+            'Cháu quay lại rồi à'
         ];
         this.dialogueIndex = 0;
         this.modalCreated  = false;
@@ -54,12 +54,12 @@ export default class ChuTiem extends NPC {
         this.bubble = document.createElement('div');
         Object.assign(this.bubble.style, {
             position: 'absolute',
-            padding: '10px 18px',
-            backgroundColor: 'rgba(255,255,255,0.9)',
-            color: '#000',
-            borderRadius: '8px',
-            fontSize: '22px',
-            maxWidth: '420px',
+            padding: '20px 32px',
+            backgroundColor: 'rgba(0,0,0,0.9)',
+            color: '#ffffff',
+            borderRadius: '12px',
+            fontSize: '60px',
+            maxWidth: '90%',
             textAlign: 'center',
             zIndex: '999'
         });
@@ -69,7 +69,7 @@ export default class ChuTiem extends NPC {
     updateBubblePosition(){
         if(!this.bubble) return;
         const left = this.x + this.width/2;
-        const top  = this.y - 80; // 80px phía trên đầu nhân vật
+        const top  = this.y - 200;
         this.bubble.style.left = `${left}px`;
         this.bubble.style.top  = `${top}px`;
         this.bubble.style.transform = 'translateX(-50%)';

@@ -150,7 +150,9 @@ export default class MayTinh extends Hint {
             cursor: 'pointer',
             borderRadius: '5px',
         });
-        gameIcon.addEventListener('click', () => this.launchSnakeGame());
+        gameIcon.addEventListener('click', () => {
+            this.launchSnakeGame();
+        });
 
         this.desktopScreen.appendChild(gameIcon);
 
@@ -162,7 +164,9 @@ export default class MayTinh extends Hint {
         // Close button
         const closeBtn = document.createElement('button');
         closeBtn.className = 'modal-close-btn';
-        closeBtn.addEventListener('click', () => this.hideModal());
+        closeBtn.addEventListener('click', () => {
+            this.hideModal();
+        });
 
         // Assemble
         this.canvasContainer.appendChild(this.gameCanvas);
@@ -173,6 +177,11 @@ export default class MayTinh extends Hint {
         this.overlay.appendChild(this.messageLabel);
         this.overlay.appendChild(closeBtn);
         document.body.appendChild(this.overlay);
+
+        // Play click sound only when user clicks inside the computer screen area
+        this.canvasContainer.addEventListener('click', () => {
+            this.game.audioManager.playClickSound();
+        });
 
         this.modalCreated = true;
     }
@@ -200,7 +209,7 @@ export default class MayTinh extends Hint {
                 const width = Math.floor(containerRect.width * 0.9);  // 90% của container
                 const height = Math.floor(containerRect.height * 0.9);
                 
-                this.snakeGame = new SnakeGame(this.gameCanvas, width, height);
+                this.snakeGame = new SnakeGame(this.gameCanvas, width, height, this.game.audioManager);
                 // Reset trạng thái cast scene
                 this.castSceneStarted = false;
                 // Bắt đầu theo dõi điểm để rung và kết thúc
@@ -259,7 +268,7 @@ export default class MayTinh extends Hint {
             const rect = this.canvasContainer.getBoundingClientRect();
             const w = Math.floor(rect.width * 0.9);
             const h = Math.floor(rect.height * 0.9);
-            this.snakeGame = new SnakeGame(this.gameCanvas, w, h);
+            this.snakeGame = new SnakeGame(this.gameCanvas, w, h, this.game.audioManager);
             // Reset trạng thái cast scene
             this.castSceneStarted = false;
             // Bắt đầu theo dõi điểm để rung và kết thúc
@@ -330,8 +339,8 @@ export default class MayTinh extends Hint {
             if (!this.snakeGame) return;
             if (this.cutscenePlayed) return; // Không rung/âm thanh sau khi cutscene xong
             const score = this.snakeGame.score || 0;
-            if (score >= 80 && score < 150) {
-                const intensity = ((score - 80) / 50) * 10; // 0->10px
+            if (score >= 80 && score < 180) {
+                const intensity = ((score - 80) / 50) * 15; // 0->15px
                 const offset = (Math.random() * 2 - 1) * intensity;
                 this.hintContainer.style.transform = `translateX(${offset}px)`;
                 // Cập nhật âm lượng tim đập dựa trên normalised (0->1)
@@ -341,7 +350,7 @@ export default class MayTinh extends Hint {
                 // Nếu dưới ngưỡng, giảm âm lượng
                 if (score < 80) this._updateHeartbeatVolume(0);
             }
-            if (score >= 10) {
+            if (score >= 180) {
                 // Bắt đầu cảnh cast scene
                 this.castSceneStarted = true;
                 this.castSceneStartTime = Date.now();

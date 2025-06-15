@@ -481,7 +481,7 @@ body {
 .loading-elements-container {
     position: absolute;
     left: 50%;
-    bottom: 60px;
+    bottom: 0px;
     transform: translateX(-50%);
     display: flex;
     flex-direction: column;

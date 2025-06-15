@@ -82,6 +82,7 @@ class ResourcePreloader {
                 'assets/images/items/vatmi.PNG',
                 'assets/images/items/giavi1.PNG',
                 'assets/images/items/giavi2.PNG',
+                'assets/images/items/giavi2.png',
                 //noi
                 'assets/images/items/noi/1.png',
                 'assets/images/items/noi/2.png',
@@ -138,15 +139,31 @@ class ResourcePreloader {
                 'assets/images/items/may3/icon.png',
                 'assets/images/items/may3/iconmay.png',
                 'assets/images/items/may3/ghetua.png',
-                
+                // Hop mật mã (thùng giấy)
+                'assets/images/items/hopmatma/thunggiayhop.png',
+                'assets/images/items/hopmatma/hopmonapcokhoa.png',
+                'assets/images/items/hopmatma/hopmonap.png',
+                'assets/images/items/hopmatma/dongnap.png',
+                'assets/images/items/hopmatma/00.png',
+                'assets/images/items/hopmatma/01.png',
+                'assets/images/items/hopmatma/khoa.png',
+                // Ca nước (dạng inventory và popup)
+                'assets/images/items/canuoc_item.png',
+                // Ảnh màn hình máy tính mini-game
+                'assets/images/items/may3/manhinhmaytinhdong.png',
+                'assets/images/items/may3/manhinhmaytinhmo.png',
             ],
             audio: [
-                'assets/audio/background-music.mp3',
+                'assets/audio/background.mp3',
                 'assets/audio/footstep.mp3',
                 'assets/audio/get-item.mp3',
                 'assets/audio/boiling-water.mp3',
                 'assets/audio/heartbeat.mp3',
                 'assets/audio/book_sound.mp3',
+                'assets/audio/click.mp3',
+                'assets/audio/food.mp3',
+                'assets/audio/gameover.mp3',
+                'assets/audio/snake_theme_song.mp3',
             ]
         };
 

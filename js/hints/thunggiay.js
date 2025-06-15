@@ -97,7 +97,7 @@ export default class ThungGiay extends Hint {
 
   updateHintImage(){
     let src;
-    if(this.currentStep === 1){
+    if(this.currentStep === 1 || this.currentStep === 2){ // show same image for steps 1 & 2
       src = 'assets/images/items/hopmatma/thunggiayhop.png';
     } else if(this.currentStep === 3){
       src = 'assets/images/items/hopmatma/hopmonapcokhoa.png';
@@ -112,6 +112,8 @@ export default class ThungGiay extends Hint {
   /* ----------------------------------------------------------- */
   showPuzzleModal(){
     if(!this.puzzleModalCreated) this.createPuzzleModal();
+    else this.refreshGridImages();
+
     this.puzzleOverlay.style.display = 'flex';
   }
 
@@ -156,7 +158,7 @@ export default class ThungGiay extends Hint {
       cell.style.width='18px';
       cell.style.height='18px';
       cell.style.cursor='pointer';
-      cell.src = 'assets/images/items/hopmatma/00.png';
+      cell.src = `assets/images/items/hopmatma/0${this.gridValues[i]}.png`;
       cell.addEventListener('click', (e)=>{
         const idx = parseInt(e.currentTarget.dataset.index);
         this.toggleCell(idx);
@@ -292,5 +294,14 @@ export default class ThungGiay extends Hint {
     };
     this.game.inventory.addItem(keyItem);
     this.game.audioManager.playItemSound();
+  }
+
+  // Helper to update all cell images based on gridValues
+  refreshGridImages(){
+    if(!this.gridContainer) return;
+    for(let i=0;i<16;i++){
+      const cell = this.gridContainer.children[i];
+      if(cell) cell.src = `assets/images/items/hopmatma/0${this.gridValues[i]}.png`;
+    }
   }
 } 

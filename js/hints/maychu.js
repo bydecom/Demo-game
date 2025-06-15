@@ -286,7 +286,7 @@ export default class MayChu extends Hint {
     toggleComputer() {
         if (!this.game.noodleDelivered) {
             if (this.messageLabel) {
-                this.messageLabel.textContent = 'Chủ tiệm chưa cho phép bạn sử dụng máy chủ. Có vẻ ông ấy cấu gắt vì đói bụng!';
+                this.messageLabel.textContent = 'Chủ tiệm chưa cho phép bạn sử dụng máy chủ. Có vẻ ông ấy cáu gắt vì đói bụng!';
             }
             return;
         }

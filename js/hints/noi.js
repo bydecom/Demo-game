@@ -473,7 +473,7 @@ export default class Noi extends Hint {
         vatMi.src = 'assets/images/items/vatmi.PNG';
         Object.assign(vatMi.style, {
             position: 'absolute',
-            right: '5%',
+            right: '2%',
             top: '20%',
             width: '340px',
             height: '340px',

@@ -153,7 +153,7 @@ export default class Map {
                         'assets/images/npc/3.png',
                         'assets/images/npc/4.png'
                     ],
-                    frameInterval: 300
+                    frameInterval: 500
                 },
                 {
                     id: 'maytinh_may3',

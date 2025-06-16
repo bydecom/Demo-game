@@ -6,7 +6,7 @@ export default class NPC extends Hint {
         super({ ...config, image: config.frames[0] });
 
         this.frames        = config.frames;           // Mảng đường dẫn hình idle
-        this.frameInterval = config.frameInterval||300;
+        this.frameInterval = config.frameInterval||1000;
         this.frameIndex    = 0;
 
         this.startIdleAnimation();

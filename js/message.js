@@ -1,13 +1,13 @@
 export default class MessageManager {
     constructor(messages = []) {
         this.messageElement = document.getElementById('message');
-        this.messages = messages.length > 0 ? messages : [
-            "Đến đây rồi!",
-            "Tôi đang di chuyển!",
-            "Thật thú vị!",
-            "Đi đến đó!",
-            "Chỗ này trông đẹp đấy!"
-        ];
+        // Ẩn hoàn toàn phần tử message nếu tồn tại
+        if (this.messageElement) {
+            this.messageElement.style.display = 'none';
+        }
+
+        // Không lưu trữ messages nữa – bỏ global messages
+        this.messages = [];
     }
     
     updateMessages(newMessages) {
@@ -16,26 +16,10 @@ export default class MessageManager {
         }
     }
     
-    showMessage(message) {
-        this.messageElement.textContent = message;
-        this.messageElement.style.opacity = '1';
-        
-        setTimeout(() => {
-            this.messageElement.style.opacity = '0';
-        }, 3000);
-    }
+    // Vô hiệu hoá hiển thị message
+    showMessage(_) { /* no-op */ }
     
-    showInitialMessage() {
-        setTimeout(() => {
-            this.messageElement.style.opacity = '1';
-            setTimeout(() => {
-                this.messageElement.style.opacity = '0';
-            }, 3000);
-        }, 500);
-    }
+    showInitialMessage() { /* no-op */ }
     
-    showRandomMessage() {
-        const randomMessage = this.messages[Math.floor(Math.random() * this.messages.length)];
-        this.showMessage(randomMessage);
-    }
+    showRandomMessage() { /* no-op */ }
 } 

@@ -31,14 +31,19 @@ export default class LoadingScreen {
         this.loadingTextElement = document.createElement('div');
         this.loadingTextElement.className = 'loading-text';
         this.loadingTextElement.textContent = 'LOADING...';
+        this.loadingTextElement.style.margin = '6px 0';
         
         // Tạo tip text element
         this.tipElement = document.createElement('div');
         this.tipElement.className = 'loading-text tip-text';
+        this.tipElement.style.marginTop = '6px';
+        this.tipElement.style.marginBottom = '20px';
         
         // Ghép các element lại với nhau
         this.progressBar.appendChild(this.progressFill);
-        
+        // Giảm khoảng cách dưới progress bar
+        this.progressBar.style.marginBottom = '6px';
+
         // Thêm tất cả elements vào container
         this.container.appendChild(this.progressBar);
         this.container.appendChild(this.loadingTextElement);

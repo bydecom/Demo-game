@@ -8,6 +8,7 @@ import MayTinh from './hints/maytinh.js';
 import ToGiay from './hints/togiay.js';
 import ThungGiay from './hints/thunggiay.js';
 import ChuTiem from './hints/chutiem.js';
+import CuaSat from './hints/cuasat.js';
 
 export default class Map {
     constructor(id, game) {
@@ -189,6 +190,16 @@ export default class Map {
                     width: 120,
                     height: 80,
                     image: 'assets/images/items/togiay/togiay_map.png'
+                },
+                {
+                    id: 'cuasat',
+                    type: 'CuaSat',
+                    name: 'Cửa Sắt',
+                    x: 6750,
+                    y: 350,
+                    width: 764,
+                    height: 1411,
+                    image: 'assets/images/items/cuasat.png'
                 }
             ]
         };
@@ -297,6 +308,13 @@ export default class Map {
                     case 'ThungGiay':
                     case 'thunggiay':
                         hint = new ThungGiay({
+                            ...hintData,
+                            game: this.game
+                        });
+                        break;
+                    case 'CuaSat':
+                    case 'cuasat':
+                        hint = new CuaSat({
                             ...hintData,
                             game: this.game
                         });

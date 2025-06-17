@@ -53,7 +53,7 @@ export default class Inventory {
         this.inventoryElement.style.backgroundImage = "url('assets/images/items/slot.png')";
         this.inventoryElement.style.backgroundSize = 'contain';
         this.inventoryElement.style.backgroundRepeat = 'no-repeat';
-        this.inventoryElement.style.zIndex = '1001';
+        this.inventoryElement.style.zIndex = '3000';
         
         // Tạo containers cho từng slot
         this.slotPositions.forEach((pos, index) => {
@@ -86,7 +86,7 @@ export default class Inventory {
         toggleButton.style.height = '100px';
         toggleButton.style.border = 'none';
         toggleButton.style.borderRadius = '5px';
-        toggleButton.style.zIndex = '1001';
+        toggleButton.style.zIndex = '3001';
         
         // Tạo hình ảnh cho nút
         const baloImage = document.createElement('img');

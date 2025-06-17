@@ -51,8 +51,8 @@ export default class AudioManager {
         this.gameoverSound.muted = this.isMuted;
         this.snakeTheme.muted = this.isMuted;
         
-        // Tạo nút điều khiển âm thanh mới ở bên trái
-        this.createAudioControl();
+        // Bỏ nút điều khiển âm thanh trên UI
+        this.audioControl = null;
         
         // Bắt đầu phát nhạc khi người dùng tương tác
         document.addEventListener('click', () => {
@@ -92,7 +92,7 @@ export default class AudioManager {
         this.foodSound.muted = this.isMuted;
         this.gameoverSound.muted = this.isMuted;
         this.snakeTheme.muted = this.isMuted;
-        this.audioControl.textContent = this.isMuted ? '🔇' : '🔊';
+        if (this.audioControl) this.audioControl.textContent = this.isMuted ? '🔇' : '🔊';
     }
     
     playWalkSound() {

@@ -58,7 +58,7 @@ export default class ToGiay extends Hint {
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
-            zIndex: '1000'
+            zIndex: '3000'
         });
         this.overlay.className = 'hint-overlay';
 

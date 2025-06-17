@@ -108,7 +108,7 @@ export default class CastScene1 {
 
         const desc = document.createElement('div');
         desc.className = 'modal-description-label';
-        desc.textContent = 'Một trang nhật ký rơi rớt... Nhấn để nhặt.';
+        desc.textContent = 'Đây là...';
         // Đặt ở mép dưới màn hình, giữa
         Object.assign(desc.style, {
             position: 'absolute',

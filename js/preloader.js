@@ -152,6 +152,11 @@ class ResourcePreloader {
                 // Ảnh màn hình máy tính mini-game
                 'assets/images/items/may3/manhinhmaytinhdong.png',
                 'assets/images/items/may3/manhinhmaytinhmo.png',
+                //logo
+                'assets/images/logotruong.png',
+                'assets/images/logokhoa.png',
+                //cửa sắt
+                'assets/images/items/cuasat.png',
             ],
             audio: [
                 'assets/audio/background.mp3',

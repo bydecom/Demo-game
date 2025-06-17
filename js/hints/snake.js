@@ -41,10 +41,16 @@ export default class SnakeGame {
 
         // Bind key handler for removal later
         this.keydownHandler = (e) => {
+            // Xác định hướng tương ứng với phím
+            const firstDir = this._getDirectionFromKey(e.code);
+
+            // Bắt đầu game bằng phím mũi tên / WASD đầu tiên – rắn đi theo hướng đó
             if (!this.gameStarted && !this.gameOver) {
+                if (!firstDir) return; // Bỏ qua phím không hợp lệ cho lần đầu
+
                 this.gameStarted = true;
-                this.direction = { x: 1, y: 0 };
-                this.nextDirection = { x: 1, y: 0 };
+                this.direction = { ...firstDir };
+                this.nextDirection = { ...firstDir };
                 if (this.audioManager) this.audioManager.playSnakeTheme();
                 return;
             }
@@ -241,10 +247,7 @@ export default class SnakeGame {
         this.ctx.fillStyle = '#ffffff';
         this.ctx.font = '16px Arial';
         this.ctx.fillText(`Score: ${this.score}`, 10, 25);
-        
-        // Debug info - có thể bỏ sau khi test
-        this.ctx.fillText(`Grid: ${this.tileCount.x}x${this.tileCount.y}`, 10, this.height - 10);
-        
+
         // Vẽ hướng dẫn hoặc game over
         if (!this.gameStarted && !this.gameOver) {
             this.ctx.fillStyle = '#ffffff';
@@ -286,5 +289,29 @@ export default class SnakeGame {
         if (this.audioManager) this.audioManager.stopSnakeTheme();
         if (this.rafId) cancelAnimationFrame(this.rafId);
         document.removeEventListener('keydown', this.keydownHandler);
+    }
+
+    /**
+     * Helper: trả về vector hướng dựa trên mã phím Arrow hoặc WASD.
+     * @param {string} code KeyboardEvent.code
+     * @returns {{x:number,y:number}|null}
+     */
+    _getDirectionFromKey(code) {
+        switch (code) {
+            case 'ArrowUp':
+            case 'KeyW':
+                return { x: 0, y: -1 };
+            case 'ArrowDown':
+            case 'KeyS':
+                return { x: 0, y: 1 };
+            case 'ArrowLeft':
+            case 'KeyA':
+                return { x: -1, y: 0 };
+            case 'ArrowRight':
+            case 'KeyD':
+                return { x: 1, y: 0 };
+            default:
+                return null;
+        }
     }
 }

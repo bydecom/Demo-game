@@ -43,7 +43,7 @@ export default class LoadingScreen {
         this.progressBar.appendChild(this.progressFill);
         // Giảm khoảng cách dưới progress bar
         this.progressBar.style.marginBottom = '6px';
-
+        
         // Thêm tất cả elements vào container
         this.container.appendChild(this.progressBar);
         this.container.appendChild(this.loadingTextElement);

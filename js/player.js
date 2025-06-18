@@ -30,34 +30,39 @@ export default class Player {
         // this.initKeyboardControls();
     }
     
-    initKeyboardControls() {
-        document.addEventListener('keydown', (event) => {
-            // Nếu nhân vật đang di chuyển thì bỏ qua phím điều khiển
-            if (this.isMoving) {
-                return;
-            }
+    // initKeyboardControls() {
+    //     document.addEventListener('keydown', (event) => {
+    //         // Nếu nhân vật đang di chuyển thì bỏ qua phím điều khiển
+    //         if (this.isMoving) {
+    //             return;
+    //         }
             
-            // Điều chỉnh bước di chuyển cho phù hợp với tốc độ cố định
-            const step = 900; // Tăng bước di chuyển để phù hợp với animation dài hơn
-            const oldX = this.x;
-            const oldDirection = this.lastDirection;
+    //         // Điều chỉnh bước di chuyển cho phù hợp với tốc độ cố định
+    //         const step = 900; // Tăng bước di chuyển để phù hợp với animation dài hơn
+    //         const oldX = this.x;
+    //         const oldDirection = this.lastDirection;
             
-            switch(event.key) {
-                case 'ArrowLeft':
-                    this.lastDirection = 'left';
-                    this.moveToPosition(this.x - step);
-                    break;
-                case 'ArrowRight':
-                    this.lastDirection = 'right';
-                    this.moveToPosition(this.x + step);
-                    break;
-            }
+    //         switch(event.key) {
+    //             case 'ArrowLeft':
+    //                 this.lastDirection = 'left';
+    //                 this.moveToPosition(this.x - step);
+    //                 break;
+    //             case 'ArrowRight':
+    //                 // Di chuyển thẳng tới mép phải của map
+    //                 {
+    //                     this.lastDirection = 'right';
+    //                     const boundaries = this.game.map.getBoundaries();
+    //                     const targetRight = boundaries.right - (this.width / 2);
+    //                     this.moveToPosition(targetRight);
+    //                 }
+    //                 break;
+    //         }
             
-            if (oldX !== this.x) {
-                this.game.audioManager.playWalkSound();
-            }
-        });
-    }
+    //         if (oldX !== this.x) {
+    //             this.game.audioManager.playWalkSound();
+    //         }
+    //     });
+    // }
     
     // Reset nhân vật về vị trí (x,y). Nếu không cung cấp, dùng vị trí bắt đầu của map.
     resetPosition(x, y) {

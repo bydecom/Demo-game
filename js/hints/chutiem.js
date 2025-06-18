@@ -20,11 +20,25 @@ export default class ChuTiem extends NPC {
 
         // Đánh dấu element là khu vực chấp nhận drop trong bộ lọc global
         this.element.classList.add('drop-target');
+
+        // ---------- Helper to calculate stand position 100px away from NPC ----------
+        this.calculateTargetX = () => {
+            const playerCenterX = this.game.player.x;
+            const npcCenterX    = this.x + this.width / 2;
+
+            // If player is on the left side of NPC, stand 100px to the left of NPC
+            if (playerCenterX < npcCenterX) {
+                return this.x - 100;
+            }
+
+            // Otherwise, stand 100px to the right of NPC
+            return this.x + this.width + 100;
+        };
     }
 
     /* ---------------- click -> mở thoại ---------------- */
     onClick() {
-        const targetX  = this.x + this.width / 2;
+        const targetX  = this.calculateTargetX();
         const distance = Math.abs(this.game.player.x - targetX);
         const THRESHOLD = 220;
 
@@ -127,7 +141,7 @@ export default class ChuTiem extends NPC {
             e.preventDefault();
             const itemId = e.dataTransfer.getData('text/plain');
             if(itemId === 'to_mi_done' && !this.game.noodleDelivered){
-                const targetX = this.x + this.width/2;
+                const targetX = this.calculateTargetX();
                 const distance = Math.abs(this.game.player.x - targetX);
                 const THRESHOLD = 220;
 

@@ -147,11 +147,8 @@ class ResourcePreloader {
                 // Ca nước (dạng inventory và popup)
                 'assets/images/items/canuoc_item.png',
                 // Ảnh màn hình máy tính mini-game
-                'assets/images/items/may3/manhinhmaytinhdong.png',
-                'assets/images/items/may3/manhinhmaytinhmo.png',
                 //logo
-                'assets/images/logotruong.png',
-                'assets/images/logokhoa.png',
+                'assets/images/logo.png',
                 //cửa sắt
                 'assets/images/items/cuasat.png',
             ],

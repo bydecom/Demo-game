@@ -81,7 +81,6 @@ class ResourcePreloader {
                 'assets/images/items/mi.png',
                 'assets/images/items/vatmi.PNG',
                 'assets/images/items/giavi1.PNG',
-                'assets/images/items/giavi2.PNG',
                 'assets/images/items/giavi2.png',
                 //noi
                 'assets/images/items/noi/1.png',

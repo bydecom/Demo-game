@@ -167,6 +167,10 @@ export default class CastScene2 {
       if (this.game.menu && this.game.menu.menuElement) {
         this.game.menu.menuElement.style.display = 'flex';
         this.game.menu.menuElement.style.opacity = '1';
+
+        // ---------------- NEW: Disable Continue after end game ----------------
+        this.game.menu.hasStartedGame = false;
+        this.game.menu.updateContinueButtonState();
       }
     }
   }

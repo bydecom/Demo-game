@@ -116,9 +116,6 @@ class ResourcePreloader {
                 // tờ giấy
                 'assets/images/items/togiay/togiay_map.png',
                 'assets/images/items/togiay/togiay_noidung.png',
-                //thùng bí mật
-                'assets/images/items/thungbimat/thungbimat_map.png',
-                'assets/images/items/thungbimat/thungbimat_noidung.png',
 
                 //npc
                 'assets/images/npc/1.png',

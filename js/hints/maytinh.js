@@ -339,8 +339,8 @@ export default class MayTinh extends Hint {
             if (!this.snakeGame) return;
             if (this.cutscenePlayed) return; // Không rung/âm thanh sau khi cutscene xong
             const score = this.snakeGame.score || 0;
-            if (score >= 80 && score < 180) {
-                const intensity = ((score - 80) / 50) * 15; // 0->15px
+            if (score >= 80 && score < 150) {
+                const intensity = ((score - 80) / 50) * 13; // 0->15px
                 const offset = (Math.random() * 2 - 1) * intensity;
                 this.hintContainer.style.transform = `translateX(${offset}px)`;
                 // Cập nhật âm lượng tim đập dựa trên normalised (0->1)
@@ -350,7 +350,7 @@ export default class MayTinh extends Hint {
                 // Nếu dưới ngưỡng, giảm âm lượng
                 if (score < 80) this._updateHeartbeatVolume(0);
             }
-            if (score >= 180) {
+            if (score >= 150) {
                 // Bắt đầu cảnh cast scene
                 this.castSceneStarted = true;
                 this.castSceneStartTime = Date.now();

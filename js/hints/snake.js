@@ -113,7 +113,7 @@ export default class SnakeGame {
         
         // FPS
         this.lastTime = 0;
-        this.gameSpeed = 150; // ms giữa các frame
+        this.gameSpeed = 200; // ms giữa các frame
     }
     
     generateFood() {

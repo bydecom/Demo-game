@@ -301,44 +301,53 @@ export default class Game {
     
     // Thêm phương thức mới để reset game state
     resetGameState() {
-        // Reset map về map đầu tiên
+        // ------------------- NEW: Reset global flags -------------------
+        // Đặt lại mọi trạng thái gameplay tuỳ chỉnh về giá trị ban đầu
+        this.castScene1Finished = false;
+        this.noodleDelivered   = false;
+        this.machine3Powered   = false;
+        // Hủy waiter còn tồn tại
+        this.clearPendingWaiter();
+
+        // ------------------- NEW: Reset audio -------------------------
+        if (this.audioManager && this.audioManager.resetAudio) {
+            this.audioManager.resetAudio();
+        }
+
+        // ------------------- NEW: Khởi tạo lại Map --------------------
+        // Xoá toàn bộ item / hint cũ trên DOM và tạo map mới tinh
+        if (this.map) {
+            this.map.clearItems();
+            this.map.clearHints();
+        }
+        // Map của game hiện đang cố định là 7 nên duy trì
         this.currentMapId = 7;
-        
-        // Reset inventory
+        this.map = new Map(this.currentMapId, this);
+
+        // ------------------- Reset inventory --------------------------
         if (this.inventory) {
             this.inventory.clearItems();
         }
-        
-        // Reset message manager
-        if (this.messageManager) {
-            this.messageManager = new MessageManager(this.map.getMessages());
-        }
 
-        // Reset player position với animation tắt
+        // ------------------- Reset message manager --------------------
+        this.messageManager = new MessageManager(this.map.getMessages());
+
+        // ------------------- Reset player -----------------------------
         if (this.player) {
             this.player.element.style.transition = 'none';
             this.player.resetPosition(this.map.getPlayerStartX(), this.map.getPlayerStartY());
-            // Force a reflow để đảm bảo transition được reset
+            // Force reflow rồi bật lại animation
             this.player.element.offsetHeight;
-            // Bật lại animation sau khi đã đặt vị trí
             this.player.element.style.transition = 'left 0.8s cubic-bezier(0.22, 1, 0.36, 1)';
         }
 
-        // Reset map items và hints
-        this.map.resetItems();
-        this.map.resetHints();
-
-        // Reset camera position
-        // Đặt transition tạm thời về none để cập nhật transform tức thì
+        // ------------------- Reset camera -----------------------------
         this.gameContainer.style.transition = 'none';
-        // Cập nhật camera ngay lập tức để canh giữa nhân vật
         this.updateCamera();
-        // Force a reflow để đảm bảo transform được áp dụng ngay lập tức
-        this.gameContainer.offsetHeight;
-        // Bật lại animation cho camera sau khi đã định vị chính xác
+        this.gameContainer.offsetHeight; // reflow
         this.gameContainer.style.transition = 'transform 0.8s cubic-bezier(0.22, 1, 0.36, 1)';
 
-        // Khởi tạo lại nhật ký trong inventory
+        // ------------------- Thêm lại vật phẩm mặc định ---------------
         this.initializeGame();
     }
     
